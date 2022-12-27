@@ -25,7 +25,9 @@ standard_worker = DataJointWorker('standard_worker',
 # restrict to 1 session
 #analysis_pop.ROISVDPython.key_source &= {'subject_id': '464724', 'session': 6}
 
-standard_worker(analysis_pop.ROISVDPython, max_calls=20)
+standard_worker(analysis_pop.ROISVDPython)
+
+#standard_worker(analysis_pop.ROISVDPython, max_calls=20)
 
 # example to add new workers  
 

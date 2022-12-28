@@ -1,4 +1,4 @@
-import datajoint as dj
+import datajoint as djhttps://github.com/ArsenyFinkelsteinLab/DJ_cloud/blob/main/workflow/populate/worker.py
 from datajoint_utilities.dj_worker import DataJointWorker, WorkerLog, ErrorLog
 
 from workflow import db_prefix
@@ -23,11 +23,11 @@ standard_worker = DataJointWorker('standard_worker',
                                   autoclear_error_patterns=autoclear_error_patterns)
 
 # restrict to 1 session
-analysis_pop.ROISVDPython.key_source &= {'subject_id': '464724', 'session': 7}
+analysis_pop.ROISVDPython.key_source &= {'subject_id': '464724', 'session': 6}
 
 standard_worker(analysis_pop.ROISVDPython)
 
-#standard_worker(analysis_pop.ROISVDPython, max_calls=20)
+standard_worker(analysis_pop.ROISVDPython, max_calls=20)
 
 # example to add new workers  
 

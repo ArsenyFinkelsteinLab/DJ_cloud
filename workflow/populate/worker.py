@@ -1,4 +1,4 @@
-import datajoint as djhttps://github.com/ArsenyFinkelsteinLab/DJ_cloud/blob/main/workflow/populate/worker.py
+import datajoint as dj
 from datajoint_utilities.dj_worker import DataJointWorker, WorkerLog, ErrorLog
 
 from workflow import db_prefix

@@ -68,9 +68,9 @@ class SVC(dj.Computed):
     threshold_for_event  : double                       # threshold in zscore, after binning. 0 means we don't threshold. 1 means we take only positive events exceeding 1 std, 2 means 2 std etc.
     time_bin             : double                       # time window used for binning the data. 0 means no binning
     ---
-    roi_components       : longblob                     # contribution of the temporal components to the SVC; fetching this table for all neurons should give U in SVD of size (neurons x components) for the top num_comp components
+    svc_components       : longblob                     # contribution of the temporal components to the SVC; fetching this for train/test neurons should give U in SVC of size (train/test neurons x components) for the top num_comp components
 
-    set_indentity        : 
+    set_indentity        : varchar(400)                 # possible value: {train, test}
     """
 
     @property
@@ -89,15 +89,15 @@ class SVC(dj.Computed):
 
         flag_zscore = 1
         threshold_variance_explained = 0.9
-        num_components_save = 100
+        num_components_save = 1000
 
         rel_data1 = (img.ROIdeltaF & key) - img.ROIBad
         self2 = SVDSingularValuesPython
         self3 = SVDTemporalComponentsPython
         for i, time_bin in enumerate(time_bin_vector):
-            self.compute_SVD(self2, self3, key, rel_data1, flag_zscore, time_bin, thresholds_for_event, threshold_variance_explained, num_components_save)
+            self.compute_SVC(self2, self3, key, rel_data1, flag_zscore, time_bin, thresholds_for_event, threshold_variance_explained, num_components_save)
 
-    def compute_SVD(self, self2, self3, key, rel_data1, flag_zscore, time_bin, thresholds_for_event, threshold_variance_explained, num_components_save):
+    def compute_SVC(self, self2, self3, key, rel_data1, flag_zscore, time_bin, thresholds_for_event, threshold_variance_explained, num_components_save):
         rel_FOVEpoch = img.FOVEpoch & key
         rel_FOV = img.FOV & key
         if 'imaging_frame_rate' in rel_FOVEpoch.heading.secondary_attributes:
@@ -105,7 +105,7 @@ class SVC(dj.Computed):
         else:
             imaging_frame_rate = rel_FOV.fetch1('imaging_frame_rate')
 
-        # TODO: Use unique_roi_number or something esle to guarantee consistent order
+        # TODO: Use unique_roi_number or something else to guarantee consistent order
         # (but unique_roi_number is not a primary key)
 
         if 'dff_trace' in rel_data1.heading.secondary_attributes:
@@ -117,6 +117,8 @@ class SVC(dj.Computed):
 
         for threshold in thresholds_for_event:
             F_normalized = NormalizeF(F_binned, threshold, flag_zscore)
+            
+            
 
             u, s, vh = np.linalg.svd(F_normalized, full_matrices=False)
 

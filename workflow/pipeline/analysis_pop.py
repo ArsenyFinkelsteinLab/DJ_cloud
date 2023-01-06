@@ -82,7 +82,7 @@ class ROISVDPython(dj.Computed):
 
         rel_temp = img.Mesoscope & key
         if len(rel_temp) > 0:
-            time_bin_vector = [1.5]
+            time_bin_vector = [0]
         else:
             time_bin_vector = [0.2, 0.5, 1]
 

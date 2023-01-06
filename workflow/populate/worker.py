@@ -33,7 +33,8 @@ standard_worker = DataJointWorker('standard_worker',
 #analysis_pop.ROISVDPython.key_source &= {'subject_id': '464724', 'session': 7}
 #standard_worker(analysis_pop.ROISVDPython)
 
-analysis_pop.ROISVDPython.key_source &= {'subject_id': '463190'}
+#analysis_pop.ROISVDPython.key_source &= {'subject_id': '463190'}
+analysis_pop.ROISVDPython.key_source &= {'subject_id': '464724', 'time_bin': '0'}
 standard_worker(analysis_pop.ROISVDPython)
 
 

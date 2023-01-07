@@ -83,15 +83,15 @@ class SVC(dj.Computed):
 
         rel_temp = img.Mesoscope & key
         if len(rel_temp) > 0:
-            time_bin_vector = [0, 1, 1.5]   # Mesoscope session
+            time_bin_vector = [0]   # Mesoscope session
         else:
             time_bin_vector = [0.2, 0.5, 1]
 
         flag_zscore = 0
 
         rel_data1 = (img.ROIdeltaF & key) - img.ROIBad
-        self2 = SVDSingularValuesPython
-        self3 = SVDTemporalComponentsPython
+        self2 = SVCSharedVariance
+        self3 = SVCTotalVariance
         for i, time_bin in enumerate(time_bin_vector):
             self.compute_SVC(self2, self3, key, rel_data1, flag_zscore, time_bin, thresholds_for_event)
 
@@ -116,33 +116,35 @@ class SVC(dj.Computed):
         for threshold in thresholds_for_event:
             F_normalized = NormalizeF(F_binned, threshold, flag_zscore)
             
+            npc = 1000
+            n = F_normalized.shape[0]
+            nhalf = np.floor(n/2)
+            ntrain = list(range(1, nhalf))
+            ntest = list(range(nhalf+1, nhalf*2))
+            
+            t = F_normalized.shape[1]
+            thalf = np.floor(t/2)
+            itrain = list(range(1, thalf))
+            itest = list(range(thalf+1, thalf*2))
+                
             sneur, varneur, u, v = svca(F_normalized, npc, ntrain, ntest, itrain, itest)
 
-            u, s, vh = np.linalg.svd(F_normalized, full_matrices=False)
-
-            # in numpy, s is already just a vector; no need to take diag
-            squared_s = s ** 2
-            variance_explained = squared_s / sum(squared_s) # a feature of SVD. proportion of variance explained by each component
-            cumulative_variance_explained = np.cumsum(variance_explained)
-            num_comp = bisect(cumulative_variance_explained, threshold_variance_explained)
-            u_limited = [ui[:num_comp] for ui in u]
-            vt = vh[:num_components_save]
-
-            # Populating POP.ROISVDPython
-            key_ROIs = (rel_data1 & key).fetch('KEY', order_by='roi_number')
-            for i in range(len(key_ROIs)):
-                key_ROIs[i]['roi_components'] = u_limited[i]
-                key_ROIs[i]['time_bin'] = time_bin
-                key_ROIs[i]['threshold_for_event'] = threshold
-
-            InsertChunked(self, key_ROIs, 1000)
-
-            # Populating POP.SVDSingularValuesPython and POP.SVDTemporalComponentsPython
-            svd_key = {**key, 'time_bin': time_bin, 'threshold_for_event': threshold}
-            self2.insert1({**svd_key, 'singular_values': s}, allow_direct_insert=True)
-            key_temporal = [{**svd_key, 'component_id': ic, 'temporal_component': vt[ic]}
-                            for ic in range(num_components_save)]
-            self3.insert(key_temporal, allow_direct_insert=True)
+            # Populating MESO.SVCSharedVariance and MESO.SVCTotalVariance
+            svc_key = {**key, 'time_bin': time_bin, 'threshold_for_event': threshold}
+            self2.insert1({**svc_key, 'shared_variance': s}, allow_direct_insert=True)
+            self3.insert1({**svc_key, 'total_variance': s}, allow_direct_insert=True)
+            
+            
+    def svca(F, npc, ntrain, ntest, itrain, itest)
+        cov = F[ntrain, itrain] * np.transpose(F[ntest, itrain])
+        u, s, vh = np.linalg.svd(cov, full_matrices=False)
+        u = u[, 1:npc]
+        v = v[, 1:npc]
+        s1 = np.transpose(u) * F[ntrain, itest]
+        s2 = vh * F[ntest, itest]
+        sneur = np.sum(s1 .* s2, dim=2)
+        varneur = np.sum(s1**2 + s2**2, dim=2) / 2
+        return [s1, s2, sneur, varneur]
 
 
 @schema
@@ -162,6 +164,6 @@ class SVCTotalVariance(dj.Computed):
     threshold_for_event  : double                       # threshold in deltaf_overf
     time_bin             : double                       # time window used for binning the data. 0 means no binning
     ---
-    singular_values      : longblob                     # total variance of activity along SVCs
+    total_variance      : longblob                     # total variance of activity along SVCs
     """
 

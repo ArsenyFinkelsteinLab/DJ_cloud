@@ -8,7 +8,7 @@ from bisect import bisect
 import math
 from math import *
 
-schema = dj.Schema('arseny_analysis_pop')
+schema = dj.Schema('lee_meso_analysis')
 
 exp2 = dj.VirtualModule('exp2', 'arseny_s1alm_experiment2')
 img = dj.VirtualModule('img', 'arseny_learning_imaging')
@@ -70,7 +70,7 @@ class SVC(dj.Computed):
     ---
     svc_components       : longblob                     # contribution of the temporal components to the SVC; fetching this for train/test neurons should give U in SVC of size (train/test neurons x components) for the top num_comp components
 
-    set_indentity        : varchar(400)                 # possible value: {train, test}
+    set_indentity        : varchar(400)                 # possible values: {train, test}
     """
 
     @property
@@ -83,21 +83,19 @@ class SVC(dj.Computed):
 
         rel_temp = img.Mesoscope & key
         if len(rel_temp) > 0:
-            time_bin_vector = [0]
+            time_bin_vector = [0, 1, 1.5]   # Mesoscope session
         else:
             time_bin_vector = [0.2, 0.5, 1]
 
-        flag_zscore = 1
-        threshold_variance_explained = 0.9
-        num_components_save = 1000
+        flag_zscore = 0
 
         rel_data1 = (img.ROIdeltaF & key) - img.ROIBad
         self2 = SVDSingularValuesPython
         self3 = SVDTemporalComponentsPython
         for i, time_bin in enumerate(time_bin_vector):
-            self.compute_SVC(self2, self3, key, rel_data1, flag_zscore, time_bin, thresholds_for_event, threshold_variance_explained, num_components_save)
+            self.compute_SVC(self2, self3, key, rel_data1, flag_zscore, time_bin, thresholds_for_event)
 
-    def compute_SVC(self, self2, self3, key, rel_data1, flag_zscore, time_bin, thresholds_for_event, threshold_variance_explained, num_components_save):
+    def compute_SVC(self, self2, self3, key, rel_data1, flag_zscore, time_bin, thresholds_for_event):
         rel_FOVEpoch = img.FOVEpoch & key
         rel_FOV = img.FOV & key
         if 'imaging_frame_rate' in rel_FOVEpoch.heading.secondary_attributes:
@@ -118,7 +116,7 @@ class SVC(dj.Computed):
         for threshold in thresholds_for_event:
             F_normalized = NormalizeF(F_binned, threshold, flag_zscore)
             
-            
+            sneur, varneur, u, v = svca(F_normalized, npc, ntrain, ntest, itrain, itest)
 
             u, s, vh = np.linalg.svd(F_normalized, full_matrices=False)
 

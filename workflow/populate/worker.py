@@ -36,13 +36,13 @@ standard_worker = DataJointWorker('standard_worker',
 
 ###### Latest runs of SVD
 #analysis_pop.ROISVDPython.key_source &= {'subject_id': '463190'}
-#analysis_pop.ROISVDPython.key_source &= {'subject_id': '464724', 'time_bin': '0'}
-#standard_worker(analysis_pop.ROISVDPython)
+analysis_pop.ROISVDPython.key_source &= {'subject_id': '464724', 'time_bin': '0'}
+standard_worker(analysis_pop.ROISVDPython)
 
 
 #### Shared variance computation
 shared_variance_analysis.SVC.key_source &= {'subject_id': '464724', 'time_bin': '0'}
-standard_worker(shared_variance_analysis.SVC)
+#standard_worker(shared_variance_analysis.SVC)
 
 
 # example to add new workers  

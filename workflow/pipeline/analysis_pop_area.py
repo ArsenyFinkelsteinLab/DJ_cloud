@@ -152,6 +152,7 @@ class ROISVDArea(dj.Computed):
 class SVDAreaSingularValues(dj.Computed):
     definition = """
     -> exp2.SessionEpoch
+    -> lab.BrainArea
     threshold_for_event  : double                       # threshold in deltaf_overf
     time_bin             : double                       # time window used for binning the data. 0 means no binning
     ---
@@ -163,6 +164,7 @@ class SVDAreaSingularValues(dj.Computed):
 class SVDAreaTemporalComponents(dj.Computed):
     definition = """
     -> exp2.SessionEpoch
+    -> lab.BrainArea
     component_id         : int                          
     threshold_for_event  : double                       # threshold in deltaf_overf
     time_bin             : double                       # time window used for binning the data. 0 means no binning

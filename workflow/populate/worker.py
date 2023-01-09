@@ -39,8 +39,9 @@ standard_worker = DataJointWorker('standard_worker',
 
 ###### Latest runs of SVD
 #analysis_pop.ROISVDPython.key_source &= {'subject_id': '464724', 'time_bin': '0'}
-analysis_pop.ROISVDPython.key_source &= {'subject_id': '464725'}
-standard_worker(analysis_pop.ROISVDPython)
+
+#analysis_pop.ROISVDPython.key_source &= {'subject_id': '464725'}
+#standard_worker(analysis_pop.ROISVDPython)
 
 
 
@@ -50,8 +51,8 @@ standard_worker(analysis_pop.ROISVDPython)
 
 
 ###### Per-area SVD
-#analysis_pop_area.ROISVDArea.key_source &= {'subject_id': '464724', 'time_bin': '0'}
-#standard_worker(analysis_pop_area.ROISVDArea)
+analysis_pop_area.ROISVDArea.key_source &= {'subject_id': '464724'}
+standard_worker(analysis_pop_area.ROISVDArea)
 
 
 

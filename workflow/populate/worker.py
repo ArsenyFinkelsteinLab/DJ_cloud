@@ -39,7 +39,7 @@ standard_worker = DataJointWorker('standard_worker',
 
 ###### Latest runs of SVD
 #analysis_pop.ROISVDPython.key_source &= {'subject_id': '464724', 'time_bin': '0'}
-analysis_pop.ROISVDPython.key_source &= {'subject_id': '464724'}
+analysis_pop.ROISVDPython.key_source &= {'subject_id': '464725'}
 standard_worker(analysis_pop.ROISVDPython)
 
 

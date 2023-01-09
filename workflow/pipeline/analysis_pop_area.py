@@ -76,7 +76,7 @@ class ROISVDArea(dj.Computed):
 
     @property
     def key_source(self):
-        return (exp2.SessionEpoch & img.ROIdeltaF & img.ROIBrainArea & stimanal.MiceIncluded) - exp2.SessionEpochSomatotopy
+        return (exp2.SessionEpoch*lab.BrainArea & img.ROIdeltaF & img.ROIBrainArea & stimanal.MiceIncluded) - exp2.SessionEpochSomatotopy
 
     def make(self, key):
     	# So far the code is only correct for threshold == 0
@@ -84,18 +84,17 @@ class ROISVDArea(dj.Computed):
 
         rel_temp = img.Mesoscope & key
         if len(rel_temp) > 0:
-            time_bin_vector = [0]
+            time_bin_vector = [0, 1.5]
         else:
             time_bin_vector = [0.2, 0.5, 1]
 
         flag_zscore = 1
         threshold_variance_explained = 0.9
-        num_components_save = 100
+        num_components_save = 1000
 
         rel_data1 = (img.ROIdeltaF*img.ROIBrainArea & key) - img.ROIBad
         self2 = SVDAreaSingularValues
         self3 = SVDAreaTemporalComponents
-        key[brain_area] = 'MOp'
         for i, time_bin in enumerate(time_bin_vector):
             self.compute_SVD(self2, self3, key, rel_data1, flag_zscore, time_bin, thresholds_for_event, threshold_variance_explained, num_components_save)
 
@@ -124,6 +123,8 @@ class ROISVDArea(dj.Computed):
 
             # in numpy, s is already just a vector; no need to take diag
             squared_s = s ** 2
+            nneurons = F_normalized.shape(0)
+            num_components_save = min(num_components_save, nneurons)
             variance_explained = squared_s / sum(squared_s) # a feature of SVD. proportion of variance explained by each component
             cumulative_variance_explained = np.cumsum(variance_explained)
             num_comp = bisect(cumulative_variance_explained, threshold_variance_explained)

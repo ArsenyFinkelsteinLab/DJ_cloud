@@ -11,7 +11,7 @@ __all__ = ['standard_worker', 'WorkerLog', 'ErrorLog']
 
 
 # -------- Define process(s) --------
-worker_schema_name = "arseny" + "workerlog"
+worker_schema_name = db_prefix + "workerlog"
 autoclear_error_patterns = []
 
 # standard process for non-GPU jobs

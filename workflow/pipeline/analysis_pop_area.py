@@ -8,7 +8,7 @@ from bisect import bisect
 import math
 from math import *
 
-schema = dj.Schema('lee_meso_analysis')
+schema = dj.Schema('arseny_analysis_pop')
 
 exp2 = dj.VirtualModule('exp2', 'arseny_s1alm_experiment2')
 img = dj.VirtualModule('img', 'arseny_learning_imaging')
@@ -148,7 +148,7 @@ class ROISVDArea(dj.Computed):
 
 
 @schema
-class SVDSingularValuesPython(dj.Computed):
+class SVDSingularValuesArea(dj.Computed):
     definition = """
     -> exp2.SessionEpoch
     threshold_for_event  : double                       # threshold in deltaf_overf
@@ -159,7 +159,7 @@ class SVDSingularValuesPython(dj.Computed):
 
 
 @schema
-class SVDTemporalComponentsPython(dj.Computed):
+class SVDTemporalComponentsArea(dj.Computed):
     definition = """
     -> exp2.SessionEpoch
     component_id         : int                          

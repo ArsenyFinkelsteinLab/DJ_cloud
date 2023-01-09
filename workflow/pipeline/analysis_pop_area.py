@@ -8,7 +8,7 @@ from bisect import bisect
 import math
 from math import *
 
-schema = dj.Schema('lee_meso_analysis')
+schema = dj.Schema('arseny_analysis_pop')
 
 exp2 = dj.VirtualModule('exp2', 'arseny_s1alm_experiment2')
 img = dj.VirtualModule('img', 'arseny_learning_imaging')
@@ -90,7 +90,7 @@ class ROISVDArea(dj.Computed):
 
         flag_zscore = 1
         threshold_variance_explained = 0.9
-        num_components_save = 1000
+        num_components_save = 500
 
         rel_data1 = (img.ROIdeltaF*img.ROIBrainArea & key) - img.ROIBad
         self2 = SVDAreaSingularValues

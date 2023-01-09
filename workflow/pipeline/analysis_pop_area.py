@@ -93,8 +93,8 @@ class ROISVDArea(dj.Computed):
         num_components_save = 1000
 
         rel_data1 = (img.ROIdeltaF*img.ROIBrainArea & key) - img.ROIBad
-        self2 = SVDSingularValuesPython
-        self3 = SVDTemporalComponentsPython
+        self2 = SVDAreaSingularValues
+        self3 = SVDAreaTemporalComponents
         key.brain_area = 'MOp'
         for i, time_bin in enumerate(time_bin_vector):
             self.compute_SVD(self2, self3, key, rel_data1, flag_zscore, time_bin, thresholds_for_event, threshold_variance_explained, num_components_save)

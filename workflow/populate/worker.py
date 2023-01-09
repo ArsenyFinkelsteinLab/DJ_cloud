@@ -3,7 +3,7 @@ from datajoint_utilities.dj_worker import DataJointWorker, WorkerLog, ErrorLog
 
 from workflow import db_prefix
 from workflow.pipeline import analysis_pop
-#from workflow.pipeline import analysis_meso_svd
+from workflow.pipeline import analysis_meso_svd
 from workflow.pipeline import analysis_pop_area
 
 # from workflow.pipeline import analysis_new   # import another schema in the future
@@ -46,13 +46,13 @@ standard_worker = DataJointWorker('standard_worker',
 
 
 ###### MESO SVD
-#analysis_meso_svd.ROISVDPython.key_source &= {'subject_id': '464724', 'time_bin': '0'}
-#standard_worker(analysis_meso_svd.ROISVDPython)
+analysis_meso_svd.ROISVDPython.key_source &= {'subject_id': '464724'}
+standard_worker(analysis_meso_svd.ROISVDPython)
 
 
 ###### Per-area SVD
-analysis_pop_area.ROISVDArea.key_source &= {'subject_id': '464724'}
-standard_worker(analysis_pop_area.ROISVDArea)
+#analysis_pop_area.ROISVDArea.key_source &= {'subject_id': '464724'}
+#standard_worker(analysis_pop_area.ROISVDArea)
 
 
 

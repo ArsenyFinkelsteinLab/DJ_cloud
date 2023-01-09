@@ -8,7 +8,7 @@ from bisect import bisect
 import math
 from math import *
 
-schema = dj.Schema('arseny_analysis_pop')
+schema = dj.Schema('lee_meso_analysis')
 
 exp2 = dj.VirtualModule('exp2', 'arseny_s1alm_experiment2')
 img = dj.VirtualModule('img', 'arseny_learning_imaging')
@@ -139,7 +139,7 @@ class ROISVDArea(dj.Computed):
 
             InsertChunked(self, key_ROIs, 1000)
 
-            # Populating POP.SVDSingularValuesPython and POP.SVDTemporalComponentsPython
+            # Populating MESO.SVDAreaSingularValues and MESO.SVDAreaTemporalComponents
             svd_key = {**key, 'time_bin': time_bin, 'threshold_for_event': threshold}
             self2.insert1({**svd_key, 'singular_values': s}, allow_direct_insert=True)
             key_temporal = [{**svd_key, 'component_id': ic, 'temporal_component': vt[ic]}
@@ -148,7 +148,7 @@ class ROISVDArea(dj.Computed):
 
 
 @schema
-class SVDSingularValuesArea(dj.Computed):
+class SVDAreaSingularValues(dj.Computed):
     definition = """
     -> exp2.SessionEpoch
     threshold_for_event  : double                       # threshold in deltaf_overf
@@ -159,7 +159,7 @@ class SVDSingularValuesArea(dj.Computed):
 
 
 @schema
-class SVDTemporalComponentsArea(dj.Computed):
+class SVDAreaTemporalComponents(dj.Computed):
     definition = """
     -> exp2.SessionEpoch
     component_id         : int                          

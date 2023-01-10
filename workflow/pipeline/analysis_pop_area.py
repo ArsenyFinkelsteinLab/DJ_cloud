@@ -116,6 +116,8 @@ class ROISVDArea(dj.Computed):
 
         F_binned = np.array([MakeBins(Fi.flatten(), time_bin * imaging_frame_rate) for Fi in F])
 
+        a = b
+        
         for threshold in thresholds_for_event:
             F_normalized = NormalizeF(F_binned, threshold, flag_zscore)
 

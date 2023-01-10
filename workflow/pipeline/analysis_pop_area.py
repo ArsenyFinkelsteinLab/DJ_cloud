@@ -123,8 +123,8 @@ class ROISVDArea(dj.Computed):
 
             # in numpy, s is already just a vector; no need to take diag
             squared_s = s ** 2
-          #  nneurons = F_normalized.shape(0)
-          #  num_components_save = min(num_components_save, nneurons)
+            nneurons = F_binned.shape[0]
+            num_components_save = min(num_components_save, nneurons)
             variance_explained = squared_s / sum(squared_s) # a feature of SVD. proportion of variance explained by each component
             cumulative_variance_explained = np.cumsum(variance_explained)
             num_comp = bisect(cumulative_variance_explained, threshold_variance_explained)
@@ -140,7 +140,7 @@ class ROISVDArea(dj.Computed):
 
             InsertChunked(self, key_ROIs, 1000)
 
-            # Populating MESO.SVDAreaSingularValues and MESO.SVDAreaTemporalComponents
+            # Populating POP.SVDAreaSingularValues and POP.SVDAreaTemporalComponents
             svd_key = {**key, 'time_bin': time_bin, 'threshold_for_event': threshold}
             self2.insert1({**svd_key, 'singular_values': s}, allow_direct_insert=True)
             key_temporal = [{**svd_key, 'component_id': ic, 'temporal_component': vt[ic]}

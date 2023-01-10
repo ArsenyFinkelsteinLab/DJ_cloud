@@ -46,13 +46,13 @@ standard_worker = DataJointWorker('standard_worker',
 
 
 ###### MESO SVD
-analysis_meso_svd.ROISVDPython.key_source &= {'subject_id': '464724'}
-standard_worker(analysis_meso_svd.ROISVDPython)
+#analysis_meso_svd.ROISVDPython.key_source &= {'subject_id': '464724'}
+#standard_worker(analysis_meso_svd.ROISVDPython)
 
 
 ###### Per-area SVD
-#analysis_pop_area.ROISVDArea.key_source &= {'subject_id': '464724'}
-#standard_worker(analysis_pop_area.ROISVDArea)
+analysis_pop_area.ROISVDArea.key_source &= {'subject_id': '464724'}
+standard_worker(analysis_pop_area.ROISVDArea)
 
 
 

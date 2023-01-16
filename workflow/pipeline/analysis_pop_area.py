@@ -134,7 +134,7 @@ class ROISVDArea(dj.Computed):
             vt = vh[:num_components_save]
 
             # Populating POP.ROISVDPython
-            key_ROIs = (rel_data1 & key).fetch('KEY', order_by='roi_number')
+            key_ROIs = (rel_data_area & key).fetch('KEY', order_by='roi_number')
             for i in range(len(key_ROIs)):
                 key_ROIs[i]['roi_components'] = u_limited[i]
                 key_ROIs[i]['time_bin'] = time_bin

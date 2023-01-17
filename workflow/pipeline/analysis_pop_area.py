@@ -8,7 +8,7 @@ from bisect import bisect
 import math
 from math import *
 
-schema = dj.Schema('arseny_analysis_pop')
+schema = dj.Schema('lee_meso_analysis')
 
 exp2 = dj.VirtualModule('exp2', 'arseny_s1alm_experiment2')
 img = dj.VirtualModule('img', 'arseny_learning_imaging')
@@ -34,7 +34,7 @@ def InsertChunked(relation, data, chunk_size):
     num_chunks = (num_elements + chunk_size - 1) // chunk_size
     for i_chunk in range(num_chunks):
         i = i_chunk * chunk_size
-        relation.insert(data[i : min(i + chunk_size, num_elements)])
+        relation.insert(data[i : min(i + chunk_size, num_elements)], skip_duplicates=True)
 
 
 def MakeBins(F, bin_size):
@@ -90,7 +90,7 @@ class ROISVDArea(dj.Computed):
 
         flag_zscore = 1
         threshold_variance_explained = 0.9
-        num_components_save = 100
+        num_components_save = 1000
 
         self2 = SVDAreaSingularValues
         self3 = SVDAreaTemporalComponents
@@ -117,6 +117,7 @@ class ROISVDArea(dj.Computed):
             F = FetchChunked(rel_data_area & key, rel_data_tot & key, 'roi_number', 'spikes_trace', 500)
 
         F_binned = np.array([MakeBins(Fi.flatten(), time_bin * imaging_frame_rate) for Fi in F])
+
         
         for threshold in thresholds_for_event:
             F_normalized = NormalizeF(F_binned, threshold, flag_zscore)
@@ -144,10 +145,10 @@ class ROISVDArea(dj.Computed):
 
             # Populating POP.SVDAreaSingularValues and POP.SVDAreaTemporalComponents
             svd_key = {**key, 'time_bin': time_bin, 'threshold_for_event': threshold}
-            self2.insert1({**svd_key, 'singular_values': s}, allow_direct_insert=True)
+            self2.insert1({**svd_key, 'singular_values': s}, allow_direct_insert=True, skip_duplicates=True)
             key_temporal = [{**svd_key, 'component_id': ic, 'temporal_component': vt[ic]}
                             for ic in range(num_components_save)]
-            self3.insert(key_temporal, allow_direct_insert=True)
+            self3.insert(key_temporal, allow_direct_insert=True, skip_duplicates=True)
 
 
 @schema
@@ -173,4 +174,3 @@ class SVDAreaTemporalComponents(dj.Computed):
     ---
     temporal_component   : longblob                     # temporal component after SVD (fetching this table for all components should give the Vtransopose matrix from SVD) of size (components x frames). Includes the top num_comp components
     """
-

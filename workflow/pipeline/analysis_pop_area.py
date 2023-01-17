@@ -34,7 +34,7 @@ def InsertChunked(relation, data, chunk_size):
     num_chunks = (num_elements + chunk_size - 1) // chunk_size
     for i_chunk in range(num_chunks):
         i = i_chunk * chunk_size
-        relation.insert(data[i : min(i + chunk_size, num_elements)], skip_duplicates=True)
+        relation.insert(data[i : min(i + chunk_size, num_elements)])
 
 
 def MakeBins(F, bin_size):
@@ -145,10 +145,10 @@ class ROISVDArea(dj.Computed):
 
             # Populating POP.SVDAreaSingularValues and POP.SVDAreaTemporalComponents
             svd_key = {**key, 'time_bin': time_bin, 'threshold_for_event': threshold}
-            self2.insert1({**svd_key, 'singular_values': s}, allow_direct_insert=True, skip_duplicates=True)
+            self2.insert1({**svd_key, 'singular_values': s}, allow_direct_insert=True)
             key_temporal = [{**svd_key, 'component_id': ic, 'temporal_component': vt[ic]}
                             for ic in range(num_components_save)]
-            self3.insert(key_temporal, allow_direct_insert=True, skip_duplicates=True)
+            self3.insert(key_temporal, allow_direct_insert=True)
 
 
 @schema

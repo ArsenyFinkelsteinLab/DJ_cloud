@@ -88,7 +88,7 @@ class ROISVDPython(dj.Computed):
 
         flag_zscore = 1
         threshold_variance_explained = 0.9
-        num_components_save = 100
+        num_components_save = 500
 
         rel_data1 = (img.ROIdeltaF & key) - img.ROIBad
         self2 = SVDSingularValuesPython
@@ -121,8 +121,9 @@ class ROISVDPython(dj.Computed):
 
             # in numpy, s is already just a vector; no need to take diag
             squared_s = s ** 2
+            nneurons = F_binned.shape[0]
             ntimepoints = F_binned.shape[1]
-            num_components_save = min(num_components_save, ntimepoints)
+            num_components_save = min(num_components_save, ntimepoints, nneurons)
             variance_explained = squared_s / sum(squared_s) # a feature of SVD. proportion of variance explained by each component
             cumulative_variance_explained = np.cumsum(variance_explained)
             num_comp = bisect(cumulative_variance_explained, threshold_variance_explained)

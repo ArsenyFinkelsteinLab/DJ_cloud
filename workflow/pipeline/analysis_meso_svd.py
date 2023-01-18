@@ -88,7 +88,7 @@ class ROISVDPython(dj.Computed):
 
         flag_zscore = 1
         threshold_variance_explained = 0.9
-        num_components_save = 1000
+        num_components_save = 100
 
         rel_data1 = (img.ROIdeltaF & key) - img.ROIBad
         self2 = SVDSingularValuesPython

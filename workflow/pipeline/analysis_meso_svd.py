@@ -127,7 +127,7 @@ class ROISVDPython(dj.Computed):
             u_limited = [ui[:num_comp] for ui in u]
             vt = vh[:num_components_save]
 
-            # Populating POP.ROISVDPython
+            # Populating MESO.ROISVDPython
             key_ROIs = (rel_data1 & key).fetch('KEY', order_by='roi_number')
             for i in range(len(key_ROIs)):
                 key_ROIs[i]['roi_components'] = u_limited[i]
@@ -136,7 +136,7 @@ class ROISVDPython(dj.Computed):
 
             InsertChunked(self, key_ROIs, 1000)
 
-            # Populating POP.SVDSingularValuesPython and POP.SVDTemporalComponentsPython
+            # Populating MESO.SVDSingularValuesPython and MESO.SVDTemporalComponentsPython
             svd_key = {**key, 'time_bin': time_bin, 'threshold_for_event': threshold}
             self2.insert1({**svd_key, 'singular_values': s}, allow_direct_insert=True)
             key_temporal = [{**svd_key, 'component_id': ic, 'temporal_component': vt[ic]}

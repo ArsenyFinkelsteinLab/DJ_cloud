@@ -51,7 +51,7 @@ standard_worker = DataJointWorker('standard_worker',
 
 
 ###### Per-area SVD
-#analysis_pop_area.ROISVDArea.key_source &= {'subject_id': '464724'}
+analysis_pop_area.ROISVDArea.key_source &= {'subject_id': '464725'}
 standard_worker(analysis_pop_area.ROISVDArea)
 
 

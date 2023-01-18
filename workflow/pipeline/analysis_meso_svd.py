@@ -74,17 +74,17 @@ class ROISVDPython(dj.Computed):
 
     @property
     def key_source(self):
-        return (exp2.SessionEpoch & img.ROIdeltaF & stimanal.MiceIncluded) - exp2.SessionEpochSomatotopy
+        return (exp2.SessionEpoch & img.ROIdeltaF & stimanal.MiceIncluded & img.Mesoscope) - exp2.SessionEpochSomatotopy
 
     def make(self, key):
     	# So far the code is only correct for threshold == 0
         thresholds_for_event = [0] # [0, 1, 2]
 
-        rel_temp = img.Mesoscope & key
-        if len(rel_temp) > 0:
-            time_bin_vector = [1.5]
-        else:
-            time_bin_vector = [0.2, 0.5, 1]
+   #     rel_temp = img.Mesoscope & key
+ #       if len(rel_temp) > 0:
+        time_bin_vector = [0, 1, 1.5]
+  #      else:
+   #         return
 
         flag_zscore = 1
         threshold_variance_explained = 0.9

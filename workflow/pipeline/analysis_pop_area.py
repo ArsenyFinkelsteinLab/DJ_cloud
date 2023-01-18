@@ -127,7 +127,8 @@ class ROISVDArea(dj.Computed):
             # in numpy, s is already just a vector; no need to take diag
             squared_s = s ** 2
             nneurons = F_binned.shape[0]
-            num_components_save = min(num_components_save, nneurons)
+            ntimepoints = F_binned.shape[1]
+            num_components_save = min(num_components_save, nneurons, ntimepoints)
             variance_explained = squared_s / sum(squared_s) # a feature of SVD. proportion of variance explained by each component
             cumulative_variance_explained = np.cumsum(variance_explained)
             num_comp = bisect(cumulative_variance_explained, threshold_variance_explained)

@@ -80,7 +80,7 @@ class ROISVDPython(dj.Computed):
     	# So far the code is only correct for threshold == 0
         thresholds_for_event = [0] # [0, 1, 2]
 
-   #     rel_temp = img.Mesoscope & key
+        rel_temp = img.Mesoscope & key
         if len(rel_temp) > 0:
             time_bin_vector = [0, 1, 1.5]
         else:

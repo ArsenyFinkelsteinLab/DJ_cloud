@@ -46,7 +46,7 @@ standard_worker = DataJointWorker('standard_worker',
 
 
 ###### MESO SVD
-analysis_meso_svd.ROISVDPython.key_source &= {'subject_id': '464724'}
+#analysis_meso_svd.ROISVDPython.key_source &= {'subject_id': '464724'}
 standard_worker(analysis_meso_svd.ROISVDPython)
 
 

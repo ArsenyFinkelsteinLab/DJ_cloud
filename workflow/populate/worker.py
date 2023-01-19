@@ -5,6 +5,7 @@ from workflow import db_prefix
 from workflow.pipeline import analysis_pop
 from workflow.pipeline import analysis_meso_svd
 from workflow.pipeline import analysis_pop_area
+from workflow.pipeline import meso_svd_autocorr
 
 # from workflow.pipeline import analysis_new   # import another schema in the future
 
@@ -47,8 +48,11 @@ standard_worker = DataJointWorker('standard_worker',
 
 ###### MESO SVD
 #analysis_meso_svd.ROISVDPython.key_source &= {'subject_id': '464724'}
-standard_worker(analysis_meso_svd.ROISVDPython)
+#standard_worker(analysis_meso_svd.ROISVDPython)
 
+###### MESO SVD Autocorr
+#analysis_meso_svd.SVDTemporalComponentsAutocorr3.key_source &= {'subject_id': '464724'}
+standard_worker(meso_svd_autocorr.SVDTemporalComponentsAutocorr3)
 
 ###### Per-area SVD
 #analysis_pop_area.ROISVDArea.key_source &= {'subject_id': '464725'}

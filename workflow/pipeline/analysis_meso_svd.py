@@ -62,7 +62,7 @@ def FloatRange(start, stop, step):
 
 
 @schema
-class ROISVDPython(dj.Computed):
+class ROISVD(dj.Computed):
     definition = """
     -> exp2.SessionEpoch
     -> img.ROI
@@ -84,11 +84,11 @@ class ROISVDPython(dj.Computed):
 
         flag_zscore = 1
         threshold_variance_explained = 0.9
-        num_components_save = 500
+        num_components_save = 1000
 
         rel_data1 = (img.ROIdeltaF & key) - img.ROIBad
-        self2 = SVDSingularValuesPython
-        self3 = SVDTemporalComponentsPython
+        self2 = SVDSingularValues
+        self3 = SVDTemporalComponents
         for i, time_bin in enumerate(time_bin_vector):
             self.compute_SVD(self2, self3, key, rel_data1, flag_zscore, time_bin, thresholds_for_event, threshold_variance_explained, num_components_save)
 
@@ -126,7 +126,7 @@ class ROISVDPython(dj.Computed):
             u_limited = [ui[:num_comp] for ui in u]
             vt = vh[:num_components_save]
 
-            # Populating MESO.ROISVDPython
+            # Populating MESO.ROISVD
             key_ROIs = (rel_data1 & key).fetch('KEY', order_by='roi_number')
             for i in range(len(key_ROIs)):
                 key_ROIs[i]['roi_components'] = u_limited[i]
@@ -135,7 +135,7 @@ class ROISVDPython(dj.Computed):
 
             InsertChunked(self, key_ROIs, 1000)
 
-            # Populating MESO.SVDSingularValuesPython and MESO.SVDTemporalComponentsPython
+            # Populating MESO.SVDSingularValues and MESO.SVDTemporalComponents
             svd_key = {**key, 'time_bin': time_bin, 'threshold_for_event': threshold}
             self2.insert1({**svd_key, 'singular_values': s}, allow_direct_insert=True)
             key_temporal = [{**svd_key, 'component_id': ic, 'temporal_component': vt[ic]}
@@ -144,7 +144,7 @@ class ROISVDPython(dj.Computed):
 
 
 @schema
-class SVDSingularValuesPython(dj.Computed):
+class SVDSingularValues(dj.Computed):
     definition = """
     -> exp2.SessionEpoch
     threshold_for_event  : double                       # threshold in deltaf_overf
@@ -155,7 +155,7 @@ class SVDSingularValuesPython(dj.Computed):
 
 
 @schema
-class SVDTemporalComponentsPython(dj.Computed):
+class SVDTemporalComponents(dj.Computed):
     definition = """
     -> exp2.SessionEpoch
     component_id         : int                          

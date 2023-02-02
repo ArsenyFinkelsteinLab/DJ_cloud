@@ -1,3 +1,8 @@
 datajoint>=0.13.0
 scipy
 datajoint-utilities @ git+https://github.com/datajoint-company/datajoint-utilities.git
+
+git clone https://github.com/lindermanlab/ssm
+cd ssm
+pip install numpy cython
+pip install -e .

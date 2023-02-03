@@ -12,6 +12,9 @@ ARG REPO_OWNER
 ARG REPO_NAME
 WORKDIR $HOME
 
+# install cython - requirement for ssm
+RUN pip install cython
+
 # Clone the workflow
 RUN git clone -b main https://github.com/${REPO_OWNER}/${REPO_NAME}.git
 

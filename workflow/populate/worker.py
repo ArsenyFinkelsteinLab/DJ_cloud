@@ -4,6 +4,7 @@ from datajoint_utilities.dj_worker import DataJointWorker, WorkerLog, ErrorLog
 from workflow import db_prefix
 from workflow.pipeline import analysis_pop
 from workflow.pipeline import analysis_meso_svd
+from workflow.pipeline import analysis_meso_svd_part
 from workflow.pipeline import analysis_pop_area
 from workflow.pipeline import meso_svd_autocorr
 from workflow.pipeline import meso_svd_area_autocorr
@@ -53,7 +54,10 @@ standard_worker = DataJointWorker('standard_worker',
 #standard_worker(analysis_meso_svd.ROISVD)
 
 ###### MESO LDS
-standard_worker(meso_LDS.SVDLDS)
+#standard_worker(meso_LDS.SVDLDS)
+
+###### MESO SVD Partition
+standard_worker(analysis_meso_svd_part.ROISVDPartition)
 
 ###### MESO SVD Autocorr
 #analysis_meso_svd.SVDTemporalComponentsAutocorr3.key_source &= {'subject_id': '463189'}

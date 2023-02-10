@@ -88,7 +88,7 @@ class ROISVDPartition(dj.Computed):
     def make(self, key):
     	# So far the code is only correct for threshold == 0
         thresholds_for_event = [0] # [0, 1, 2]
-        time_bin_vector = [0, 1.5]
+        time_bin_vector = [0]
 
         flag_zscore = 1
         threshold_variance_explained = 0.9

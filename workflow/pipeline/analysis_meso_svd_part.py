@@ -117,10 +117,10 @@ class ROISVDPartition(dj.Computed):
             F = FetchChunked(rel_data1 & key, 'roi_number', 'spikes_trace', 500)
 
         F_binned = np.array([MakeBins(Fi.flatten(), time_bin * imaging_frame_rate) for Fi in F])
+        T = int(np.floor(F_binned.shape[1]/2))
 
         for part in (0,1):
 
-            T = int(np.floor(F_binned.shape[1]/2))
             if ~part:
                 F_binned = F_binned[:,0:T]
             else:

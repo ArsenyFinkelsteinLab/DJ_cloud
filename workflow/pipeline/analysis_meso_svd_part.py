@@ -136,16 +136,16 @@ class ROISVDPartition(dj.Computed):
                 nneurons = F_partition.shape[0]
                 ntimepoints = F_partition.shape[1]
                 num_components_save = min(num_components_save, ntimepoints, nneurons)
-                variance_explained = squared_s / sum(squared_s) # a feature of SVD. proportion of variance explained by each component
-                cumulative_variance_explained = np.cumsum(variance_explained)
-                num_comp = bisect(cumulative_variance_explained, threshold_variance_explained)
-                u_limited = [ui[:num_comp] for ui in u]
+                #variance_explained = squared_s / sum(squared_s) # a feature of SVD. proportion of variance explained by each component
+                #cumulative_variance_explained = np.cumsum(variance_explained)
+                #num_comp = bisect(cumulative_variance_explained, threshold_variance_explained)
+                #u_limited = [ui[:num_comp] for ui in u]
                 vt = vh[:num_components_save]
 
                 # Populating MESO.ROISVDPartition
                 key_ROIs = (rel_data1 & key).fetch('KEY', order_by='roi_number')
                 for i in range(len(key_ROIs)):
-                    key_ROIs[i]['roi_components'] = u_limited[i]
+                    key_ROIs[i]['roi_components'] = u[i]
                     key_ROIs[i]['time_bin'] = time_bin
                     key_ROIs[i]['threshold_for_event'] = threshold
                     key_ROIs[i]['partition'] = part

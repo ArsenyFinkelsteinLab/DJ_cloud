@@ -121,7 +121,7 @@ class ROISVDPartition(dj.Computed):
 
         for part in (0,1):
 
-            if ~part:
+            if part == 0:
                 F_partition = F_binned[:,0:T]
             else:
                 F_partition = F_binned[:,T+1:]

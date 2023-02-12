@@ -122,19 +122,19 @@ class ROISVDPartition(dj.Computed):
         for part in (0,1):
 
             if ~part:
-                F_binned = F_binned[:,0:T]
+                F_partition = F_binned[:,0:T]
             else:
-                F_binned = F_binned[:,T+1:]
+                F_partition = F_binned[:,T+1:]
             
             for threshold in thresholds_for_event:
-                F_normalized = NormalizeF(F_binned, threshold, flag_zscore)
+                F_normalized = NormalizeF(F_partition, threshold, flag_zscore)
 
                 u, s, vh = np.linalg.svd(F_normalized, full_matrices=False)
 
                 # in numpy, s is already just a vector; no need to take diag
                 squared_s = s ** 2
-                nneurons = F_binned.shape[0]
-                ntimepoints = F_binned.shape[1]
+                nneurons = F_partition.shape[0]
+                ntimepoints = F_partition.shape[1]
                 num_components_save = min(num_components_save, ntimepoints, nneurons)
                 variance_explained = squared_s / sum(squared_s) # a feature of SVD. proportion of variance explained by each component
                 cumulative_variance_explained = np.cumsum(variance_explained)
@@ -142,7 +142,7 @@ class ROISVDPartition(dj.Computed):
                 u_limited = [ui[:num_comp] for ui in u]
                 vt = vh[:num_components_save]
 
-                # Populating MESO.ROISVDPart
+                # Populating MESO.ROISVDPartition
                 key_ROIs = (rel_data1 & key).fetch('KEY', order_by='roi_number')
                 for i in range(len(key_ROIs)):
                     key_ROIs[i]['roi_components'] = u_limited[i]

@@ -76,7 +76,7 @@ class ROISVDPartition(dj.Computed):
     -> img.ROI
     threshold_for_event  : double                       # threshold in zscore, after binning. 0 means we don't threshold. 1 means we take only positive events exceeding 1 std, 2 means 2 std etc.
     time_bin             : double                       # time window used for binning the data. 0 means no binning
-    partition            : int           # indicates if first of second half of the session, by 0 or 1 respectively
+    partition            : int                          # indicates partition number, value 0 to 3
     ---
     roi_components       : longblob                     # contribution of the temporal components to the activity of each neurons; fetching this table for all neurons should give U in SVD of size (neurons x components) for the top num_comp components
     """
@@ -117,14 +117,19 @@ class ROISVDPartition(dj.Computed):
             F = FetchChunked(rel_data1 & key, 'roi_number', 'spikes_trace', 500)
 
         F_binned = np.array([MakeBins(Fi.flatten(), time_bin * imaging_frame_rate) for Fi in F])
-        T = int(np.floor(F_binned.shape[1]/2))
+        T = F_binned.shape[1]
 
-        for part in (0,1):
+        session_epoch_type = key['session_epoch_type']
+        if session_epoch_type == 'spont_only':
+            num_partitions = 2
+        else:
+            num_partitions = 4
+        
+        part_len = int(np.floor(T/num_partitions))
 
-            if part == 0:
-                F_partition = F_binned[:,0:T]
-            else:
-                F_partition = F_binned[:,T+1:]
+        for t in range(num_partitions):
+
+            F_partition = F_binned[:,t*part_len : (t+1)*part_len]
             
             for threshold in thresholds_for_event:
                 F_normalized = NormalizeF(F_partition, threshold, flag_zscore)
@@ -148,14 +153,14 @@ class ROISVDPartition(dj.Computed):
                     key_ROIs[i]['roi_components'] = u_limited[i]
                     key_ROIs[i]['time_bin'] = time_bin
                     key_ROIs[i]['threshold_for_event'] = threshold
-                    key_ROIs[i]['partition'] = part
+                    key_ROIs[i]['partition'] = t
 
                 InsertChunked(self, key_ROIs, 1000)
 
                 # Populating MESO.SVDSingularValuesPartition and MESO.SVDTemporalComponentsPart
-                svd_key = {**key, 'time_bin': time_bin, 'threshold_for_event': threshold, 'partition': part}
+                svd_key = {**key, 'time_bin': time_bin, 'threshold_for_event': threshold, 'partition': t}
                 self2.insert1({**svd_key, 'singular_values': s}, allow_direct_insert=True)
-                key_temporal = [{**svd_key, 'component_id': ic, 'temporal_component': vt[ic], 'partition': part}
+                key_temporal = [{**svd_key, 'component_id': ic, 'temporal_component': vt[ic], 'partition': t}
                                 for ic in range(num_components_save)]
                 self3.insert(key_temporal, allow_direct_insert=True)
 
@@ -166,7 +171,7 @@ class SVDSingularValuesPartition(dj.Computed):
     -> exp2.SessionEpoch
     threshold_for_event  : double                       # threshold in deltaf_overf
     time_bin             : double                       # time window used for binning the data. 0 means no binning
-    partition            : int                          # indicates if first of second half of the session, by 0 or 1 respectively
+    partition            : int                          # indicates partition number, value 0 to 3
     ---
     singular_values      : longblob                     # singular values of each SVD temporal component, ordered from larges to smallest value
     """
@@ -179,7 +184,7 @@ class SVDTemporalComponentsPartition(dj.Computed):
     component_id         : int                          
     threshold_for_event  : double                       # threshold in deltaf_overf
     time_bin             : double                       # time window used for binning the data. 0 means no binning
-    partition            : int                          # indicates if first of second half of the session, by 0 or 1 respectively
+    partition            : int                          # indicates partition number, value 0 to 3
     ---
     temporal_component   : longblob                     # temporal component after SVD (fetching this table for all components should give the Vtransopose matrix from SVD) of size (components x frames). Includes the top num_comp components
     """

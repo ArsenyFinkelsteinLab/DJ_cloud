@@ -34,12 +34,12 @@ class SVDLDS(dj.Computed):
     def make(self, key):
 
         session_epoch_type = key['session_epoch_type']
- #       if session_epoch_type == 'spont_only':
-        observed_dim_vals = [30]
-        latent_dim_vals = [20]
-  #      else:
-  #          observed_dim_vals = [30]
-  #          latent_dim_vals = [20]
+        if session_epoch_type == 'spont_only':
+            observed_dim_vals = [50]
+            latent_dim_vals = [20]
+        else:
+            observed_dim_vals = [50]
+            latent_dim_vals = [20]
 
         for observed_dim in observed_dim_vals:
             for latent_dim in latent_dim_vals:

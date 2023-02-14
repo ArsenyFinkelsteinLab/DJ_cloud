@@ -10,6 +10,10 @@ import autograd.numpy.random as npr
 
 import ssm
 
+dj.config['database.host'] = 'datajoint.mesoscale-activity-map.org'
+dj.config['database.user'] = 'lee'
+dj.config['database.password'] = 'simple'
+
 schema = dj.Schema('lee_meso_analysis')
 
 exp2 = dj.VirtualModule('exp2', 'arseny_s1alm_experiment2')
@@ -35,10 +39,10 @@ class SVDLDS(dj.Computed):
 
         session_epoch_type = key['session_epoch_type']
         if session_epoch_type == 'spont_only':
-            observed_dim_vals = [40]
+            observed_dim_vals = [30]
             latent_dim_vals = [20]
         else:
-            observed_dim_vals = [40]
+            observed_dim_vals = [30]
             latent_dim_vals = [20]
 
         for observed_dim in observed_dim_vals:

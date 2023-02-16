@@ -27,6 +27,7 @@ jobs:
             INSTANCE_ID: ${{ secrets.INSTANCE_ID }}
             INSTANCE_IP: ${{ secrets.INSTANCE_IP }}
             SSH_KEY: ${{ secrets.SSH_KEY }}
+            REPO_NAME: ${{ github.event.repository.name }}
         steps:
             - name: Configure AWS Credentials
               uses: aws-actions/configure-aws-credentials@v1
@@ -53,13 +54,13 @@ jobs:
               if: always()
               run: |
                   echo "INFO: fetch and store container logs"
-                  ssh -o "StrictHostKeyChecking no" ubuntu@${INSTANCE_IP} "bash /home/ubuntu/fetch_log.sh ${GITHUB_REPOSITORY}" || true
-                  scp -r ubuntu@${INSTANCE_IP}:/tmp/${GITHUB_REPOSITORY}_Log /tmp/${GITHUB_REPOSITORY}_Log
+                  ssh -o "StrictHostKeyChecking no" ubuntu@${INSTANCE_IP} "bash /home/ubuntu/fetch_log.sh ${REPO_NAME}" || true
+                  scp -r ubuntu@${INSTANCE_IP}:/tmp/${REPO_NAME}_Log /tmp/${REPO_NAME}_Log
             - uses: actions/upload-artifact@v3
               if: always()
               with:
-                name: ${GITHUB_REPOSITORY}_Log
-                path: /tmp/${GITHUB_REPOSITORY}_Log
+                name: ${{ github.event.repository.name }}_Log
+                path: /tmp/${{ github.event.repository.name }}_Log
             - name: stop worker instance
               if: always()
               run: |

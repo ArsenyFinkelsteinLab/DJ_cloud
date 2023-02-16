@@ -26,6 +26,7 @@ jobs:
         env:
             INSTANCE_ID: ${{ secrets.INSTANCE_ID }}
             INSTANCE_IP: ${{ secrets.INSTANCE_IP }}
+            SSH_KEY: ${{ secrets.SSH_KEY }}
         steps:
             - name: Configure AWS Credentials
               uses: aws-actions/configure-aws-credentials@v1
@@ -38,27 +39,30 @@ jobs:
                   echo "INFO::start worker instance"
                   aws ec2 start-instances --instance-ids ${INSTANCE_ID}
                   sleep 90
+                  echo "INFO::Add SSH key to GHA runner"
+                  ssh-add - <<< $SSH_KEY
             - name: start process
+              timeout-minutes: 1 #330 # 5.5hrs
               run: |
                   echo "INFO::start process"
-                  ssh-keygen -t rsa -b 2048 -C arseny -f ./arseny_temp_ssh -q -N ""
-                  aws ec2-instance-connect send-ssh-public-key \
-                    --instance-id ${INSTANCE_ID} \
-                    --instance-os-user ubuntu \
-                    --availability-zone us-east-1a \
-                    --ssh-public-key file://${PWD}/arseny_temp_ssh.pub
-                  ssh -o "StrictHostKeyChecking no" -o "TCPKeepAlive no" -i arseny_temp_ssh ubuntu@${INSTANCE_IP} "sudo rm -rf /home/ubuntu/ArsenyLabWorkflow;git clone https://github.com/${GITHUB_REPOSITORY}.git /home/ubuntu/ArsenyLabWorkflow;bash /home/ubuntu/ArsenyLabWorkflow/entrypoint.sh" || true
+                  ssh -o "StrictHostKeyChecking no" -o "TCPKeepAlive no" ubuntu@${INSTANCE_IP} "sudo rm -rf /home/ubuntu/ArsenyLabWorkflow;git clone https://github.com/${GITHUB_REPOSITORY}.git /home/ubuntu/ArsenyLabWorkflow;bash /home/ubuntu/ArsenyLabWorkflow/entrypoint.sh" || true
                   rm -f ./arseny_temp_ssh*
                   echo "INFO::process finished"
-#             - name: stop worker instance
-#               run: |
-#                   echo "INFO::stop worker instance"
-#                   ssh-keygen -t rsa -b 2048 -C arseny -f ./arseny_temp_ssh -q -N ""
-#                   aws ec2-instance-connect send-ssh-public-key \
-#                     --instance-id ${INSTANCE_ID} \
-#                     --instance-os-user ubuntu \
-#                     --availability-zone us-east-1a \
-#                     --ssh-public-key file://${PWD}/arseny_temp_ssh.pub
-#                   ssh -o "StrictHostKeyChecking no" -i arseny_temp_ssh ubuntu@${INSTANCE_IP} "sudo shutdown now" || true
-#                   rm -f ./arseny_temp_ssh*
-#                   echo "INFO::instance stopped"
+            - name: fetch and store container logs
+              if: always()
+              run: |
+                  echo "INFO: fetch and store container logs"
+                  ssh -o "StrictHostKeyChecking no" ubuntu@${INSTANCE_IP} "bash /home/ubuntu/fetch_log.sh ${GITHUB_REPOSITORY}" || true
+                  scp -r ubuntu@${INSTANCE_IP}:/tmp/${GITHUB_REPOSITORY}_Log .
+            - uses: actions/upload-artifact@v3
+              if: always()
+              with:
+                name: ${GITHUB_REPOSITORY}_Log
+                path: ${GITHUB_REPOSITORY}_Log
+            - name: stop worker instance
+              if: always()
+              run: |
+                  echo "INFO::stop worker instance"
+                  ssh -o "StrictHostKeyChecking no" ubuntu@${INSTANCE_IP} "sudo shutdown now" || true
+                  rm -f ./arseny_temp_ssh*
+                  echo "INFO::instance stopped"

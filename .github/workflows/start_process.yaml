@@ -39,15 +39,14 @@ jobs:
 #                   echo "INFO::start worker instance"
 #                   aws ec2 start-instances --instance-ids ${INSTANCE_ID}
 #                   sleep 90
-            - name: save ssh key
+            - uses: webfactory/ssh-agent@v0.7.0
+              with:
+                  ssh-private-key: ${{ secrets.SSH_KEY }}
+            - name: start process
+              timeout-minutes: 1 #330 # 5.5hrs
               run: |
-                  echo "INFO::Put SSH key to GHA runner"
-                  ssh-add - <<< "${SSH_KEY}"
+                  echo "INFO::start process"
                   ssh -o "StrictHostKeyChecking no" -o "TCPKeepAlive no" ubuntu@${INSTANCE_IP} "date"
-#             - name: start process
-#               timeout-minutes: 1 #330 # 5.5hrs
-#               run: |
-#                   echo "INFO::start process"
 #                   ssh -o "StrictHostKeyChecking no" -o "TCPKeepAlive no" -i arseny_lab.pem ubuntu@${INSTANCE_IP} "sudo rm -rf /home/ubuntu/ArsenyLabWorkflow;git clone https://github.com/${GITHUB_REPOSITORY}.git /home/ubuntu/ArsenyLabWorkflow;bash /home/ubuntu/ArsenyLabWorkflow/entrypoint.sh" || true
 #                   rm -f ./arseny_temp_ssh*
 #                   echo "INFO::process finished"

@@ -45,7 +45,7 @@ jobs:
               with:
                   ssh-private-key: ${{ secrets.SSH_KEY }}
             - name: start process
-              timeout-minutes: 2 #330 # 5.5hrs
+              timeout-minutes: 342 # 5.7hrs out of 6 hrs limit
               run: |
                   echo "INFO::start process"
                   ssh -o "StrictHostKeyChecking no" -o "TCPKeepAlive no" ubuntu@${INSTANCE_IP} "sudo rm -rf /home/ubuntu/ArsenyLabWorkflow;git clone https://github.com/${GITHUB_REPOSITORY}.git /home/ubuntu/ArsenyLabWorkflow;bash /home/ubuntu/ArsenyLabWorkflow/entrypoint.sh" || true

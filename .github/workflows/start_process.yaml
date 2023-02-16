@@ -34,36 +34,39 @@ jobs:
                   aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
                   aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
                   aws-region: us-east-1
-            - name: start worker instance
+#             - name: start worker instance
+#               run: |
+#                   echo "INFO::start worker instance"
+#                   aws ec2 start-instances --instance-ids ${INSTANCE_ID}
+#                   sleep 90
+            - name: save ssh key
               run: |
-                  echo "INFO::start worker instance"
-                  aws ec2 start-instances --instance-ids ${INSTANCE_ID}
-                  sleep 90
                   echo "INFO::Put SSH key to GHA runner"
                   echo -n $SSH_KEY > arseny_lab.pem
                   chmod 400 arseny_lab.pem
-            - name: start process
-              timeout-minutes: 1 #330 # 5.5hrs
-              run: |
-                  echo "INFO::start process"
-                  ssh -o "StrictHostKeyChecking no" -o "TCPKeepAlive no" -i arseny_lab.pem ubuntu@${INSTANCE_IP} "sudo rm -rf /home/ubuntu/ArsenyLabWorkflow;git clone https://github.com/${GITHUB_REPOSITORY}.git /home/ubuntu/ArsenyLabWorkflow;bash /home/ubuntu/ArsenyLabWorkflow/entrypoint.sh" || true
-                  rm -f ./arseny_temp_ssh*
-                  echo "INFO::process finished"
-            - name: fetch and store container logs
-              if: always()
-              run: |
-                  echo "INFO: fetch and store container logs"
-                  ssh -o "StrictHostKeyChecking no" ubuntu@${INSTANCE_IP} -i arseny_lab.pem "bash /home/ubuntu/fetch_log.sh ${GITHUB_REPOSITORY}" || true
-                  scp -r ubuntu@${INSTANCE_IP}:/tmp/${GITHUB_REPOSITORY}_Log .
-            - uses: actions/upload-artifact@v3
-              if: always()
-              with:
-                name: ${GITHUB_REPOSITORY}_Log
-                path: ${GITHUB_REPOSITORY}_Log
-            - name: stop worker instance
-              if: always()
-              run: |
-                  echo "INFO::stop worker instance"
-                  ssh -o "StrictHostKeyChecking no" -i arseny_lab.pem ubuntu@${INSTANCE_IP} "sudo shutdown now" || true
-                  rm -f ./arseny_temp_ssh*
-                  echo "INFO::instance stopped"
+                  ssh -o "StrictHostKeyChecking no" -o "TCPKeepAlive no" -i arseny_lab.pem ubuntu@${INSTANCE_IP} "date"
+#             - name: start process
+#               timeout-minutes: 1 #330 # 5.5hrs
+#               run: |
+#                   echo "INFO::start process"
+#                   ssh -o "StrictHostKeyChecking no" -o "TCPKeepAlive no" -i arseny_lab.pem ubuntu@${INSTANCE_IP} "sudo rm -rf /home/ubuntu/ArsenyLabWorkflow;git clone https://github.com/${GITHUB_REPOSITORY}.git /home/ubuntu/ArsenyLabWorkflow;bash /home/ubuntu/ArsenyLabWorkflow/entrypoint.sh" || true
+#                   rm -f ./arseny_temp_ssh*
+#                   echo "INFO::process finished"
+#             - name: fetch and store container logs
+#               if: always()
+#               run: |
+#                   echo "INFO: fetch and store container logs"
+#                   ssh -o "StrictHostKeyChecking no" ubuntu@${INSTANCE_IP} -i arseny_lab.pem "bash /home/ubuntu/fetch_log.sh ${GITHUB_REPOSITORY}" || true
+#                   scp -r ubuntu@${INSTANCE_IP}:/tmp/${GITHUB_REPOSITORY}_Log .
+#             - uses: actions/upload-artifact@v3
+#               if: always()
+#               with:
+#                 name: ${GITHUB_REPOSITORY}_Log
+#                 path: ${GITHUB_REPOSITORY}_Log
+#             - name: stop worker instance
+#               if: always()
+#               run: |
+#                   echo "INFO::stop worker instance"
+#                   ssh -o "StrictHostKeyChecking no" -i arseny_lab.pem ubuntu@${INSTANCE_IP} "sudo shutdown now" || true
+#                   rm -f ./arseny_temp_ssh*
+#                   echo "INFO::instance stopped"

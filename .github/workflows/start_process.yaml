@@ -42,8 +42,7 @@ jobs:
             - name: save ssh key
               run: |
                   echo "INFO::Put SSH key to GHA runner"
-                  echo -n $SSH_KEY > ~/.ssh/id_ed25519
-                  chmod 400 ~/.ssh/id_ed25519
+                  ssh-add - <<< "${SSH_KEY}"
                   ssh -o "StrictHostKeyChecking no" -o "TCPKeepAlive no" ubuntu@${INSTANCE_IP} "date"
 #             - name: start process
 #               timeout-minutes: 1 #330 # 5.5hrs

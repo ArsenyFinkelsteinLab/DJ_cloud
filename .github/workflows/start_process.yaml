@@ -54,12 +54,12 @@ jobs:
               run: |
                   echo "INFO: fetch and store container logs"
                   ssh -o "StrictHostKeyChecking no" ubuntu@${INSTANCE_IP} "bash /home/ubuntu/fetch_log.sh ${GITHUB_REPOSITORY}" || true
-                  scp -r ubuntu@${INSTANCE_IP}:/tmp/${GITHUB_REPOSITORY}_Log .
+                  scp -r ubuntu@${INSTANCE_IP}:/tmp/${GITHUB_REPOSITORY}_Log /tmp/${GITHUB_REPOSITORY}_Log
             - uses: actions/upload-artifact@v3
               if: always()
               with:
                 name: ${GITHUB_REPOSITORY}_Log
-                path: ${GITHUB_REPOSITORY}_Log
+                path: /tmp/${GITHUB_REPOSITORY}_Log
             - name: stop worker instance
               if: always()
               run: |

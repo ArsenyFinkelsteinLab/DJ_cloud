@@ -39,12 +39,12 @@ jobs:
          echo $STATE
          echo "instance_state=$STATE" >> $GITHUB_OUTPUT
       - name: Trigger process
-        if: ${{ steps.check_instance.outputs.instance_state }} == "stopped"
+        if: steps.check_instance.outputs.instance_state == "stopped"
         run: |
          echo "INFO:: instance state is stopped"
 #         uses: ./.github/workflows/start_process.yaml
       - name: Instance is still running
-        if: ${{ steps.check_instance.outputs.instance_state }} == "running"
+        if: steps.check_instance.outputs.instance_state == "running"
         run: |
          echo "INFO:: instance state is running"
        

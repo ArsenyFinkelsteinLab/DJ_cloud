@@ -36,10 +36,10 @@ jobs:
          export STATE=$(aws ec2 describe-instances --output text --filters Name=instance-id,Values=${{ secrets.INSTANCE_ID }} --query "Reservations[].Instances[].State[].Name[]")
          echo "instance_state=$STATE" >> $GITHUB_OUTPUT
      - name: Trigger process
-       if: ${{ steps.check_instance.outputs.instance_state }} == "stopped"
-       uses: ${{ github.repository }}/.github/workflows/start_process.yaml@main
+       if: ${{ steps.check_instance.outputs.instance_state == "stopped" }} 
+       uses: ./.github/workflows/start_process.yaml@main
      - name: Instance is still running
-       if: ${{ steps.check_instance.outputs.instance_state }} == "running"
+       if: ${{ steps.check_instance.outputs.instance_state == "running" }}
        run: |
          echo "INFO:: instance state is running"
        

@@ -10,7 +10,7 @@ on:
         required: true
       AWS_ACCESS_KEY_ID: 
         required: true
-      AWS_ACCESS_SECRET_KEY: 
+      AWS_SECRET_ACCESS_KEY: 
         required: true
 jobs:
   call_context_check:

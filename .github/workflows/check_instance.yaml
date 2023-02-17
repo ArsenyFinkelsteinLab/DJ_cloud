@@ -24,8 +24,8 @@ jobs:
     needs: call_context_check
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout element repo
-        uses: actions/checkout@v3
+#       - name: Checkout workflow repo
+#         uses: actions/checkout@v3
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:

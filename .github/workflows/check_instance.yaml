@@ -46,7 +46,7 @@ jobs:
       - name: Instance is still running
         if: steps.check_instance.outputs.instance_state == 'running'
         run: |
-         echo "INFO:: instance state is running"
+         echo "INFO:: Instance is still running"
          exit 1
        
          

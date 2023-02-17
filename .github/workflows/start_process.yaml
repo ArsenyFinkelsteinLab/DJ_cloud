@@ -1,6 +1,17 @@
 name: start_process
 on:
   workflow_call:
+    secrets:
+      INSTANCE_ID:
+        required: true
+      INSTANCE_IP:
+        required: true
+      SSH_KEY: 
+        required: true
+      AWS_ACCESS_KEY_ID: 
+        required: true
+      AWS_ACCESS_SECRET_KEY: 
+        required: true
 jobs:
   call_context_check:
     uses: dj-sciops/djsciops-cicd/.github/workflows/context_check.yaml@main

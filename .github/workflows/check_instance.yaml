@@ -24,8 +24,6 @@ jobs:
     needs: call_context_check
     runs-on: ubuntu-latest
     steps:
-#       - name: Checkout workflow repo
-#         uses: actions/checkout@v3
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -38,17 +36,22 @@ jobs:
          export STATE=$(aws ec2 describe-instances --output text --filters Name=instance-id,Values=${{ secrets.INSTANCE_ID }} --query "Reservations[].Instances[].State[].Name[]")
          echo $STATE
          echo "instance_state=$STATE" >> $GITHUB_OUTPUT
-      - name: Trigger process
-        if: steps.check_instance.outputs.instance_state == 'stopped'
-#         run: |
-#          echo "INFO:: instance state is stopped"
-        uses: ./.github/workflows/start_process.yaml
-      - name: Instance is still running
-        if: steps.check_instance.outputs.instance_state == 'running'
+    outputs:
+      instance_state: ${{ steps.check_instance.outputs.instance_state }}
+  trigger_process:
+    needs: check_if_instance_running
+    if: needs.check_if_instance_running.outputs.instance_state == 'stopped'
+    uses: ./.github/workflows/start_process.yaml
+  instance_is_still_running:
+    runs-on: ubuntu-latest
+    needs: check_if_instance_running
+    if: needs.check_if_instance_running.outputs.instance_state == 'running'
+    steps:
+      - name: Instance is running
         run: |
          echo "INFO:: Instance is still running"
          exit 1
-       
+
          
          
          

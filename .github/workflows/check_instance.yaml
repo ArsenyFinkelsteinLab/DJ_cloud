@@ -36,6 +36,7 @@ jobs:
         id: check_instance
         run: |
          export STATE=$(aws ec2 describe-instances --output text --filters Name=instance-id,Values=${{ secrets.INSTANCE_ID }} --query "Reservations[].Instances[].State[].Name[]")
+         echo $STATE
          echo "instance_state=$STATE" >> $GITHUB_OUTPUT
       - name: Trigger process
         if: ${{ steps.check_instance.outputs.instance_state }} == "stopped"

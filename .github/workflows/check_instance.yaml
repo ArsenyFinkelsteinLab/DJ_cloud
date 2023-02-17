@@ -24,23 +24,25 @@ jobs:
     needs: call_context_check
     runs-on: ubuntu-latest
     steps:
-     - name: Configure AWS Credentials
-       uses: aws-actions/configure-aws-credentials@v1
-       with:
+      - name: Checkout element repo
+        uses: actions/checkout@v3
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
          aws-region: us-east-1
-     - name: Check instance
-       id: check_instance
-       run: |
+      - name: Check instance
+        id: check_instance
+        run: |
          export STATE=$(aws ec2 describe-instances --output text --filters Name=instance-id,Values=${{ secrets.INSTANCE_ID }} --query "Reservations[].Instances[].State[].Name[]")
          echo "instance_state=$STATE" >> $GITHUB_OUTPUT
-     - name: Trigger process
-       if: ${{ steps.check_instance.outputs.instance_state }} == "stopped"
-       uses: ./.github/workflows/start_process.yaml@main
-     - name: Instance is still running
-       if: ${{ steps.check_instance.outputs.instance_state }} == "running"
-       run: |
+      - name: Trigger process
+        if: ${{ steps.check_instance.outputs.instance_state }} == "stopped"
+        uses: ./.github/workflows/start_process.yaml@main
+      - name: Instance is still running
+        if: ${{ steps.check_instance.outputs.instance_state }} == "running"
+        run: |
          echo "INFO:: instance state is running"
        
          

@@ -47,7 +47,12 @@ jobs:
     needs: check_if_instance_running
     if: needs.check_if_instance_running.outputs.instance_state == 'stopped'
     uses: ./.github/workflows/start_process.yaml
-      
+    secrets:
+      INSTANCE_ID: ${{ secrets.INSTANCE_ID }}
+      INSTANCE_IP: ${{ secrets.INSTANCE_IP }}
+      SSH_KEY: ${{ secrets.SSH_KEY }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
          
          

@@ -21,13 +21,14 @@ jobs:
     needs: check_your_permission
     uses: dj-sciops/djsciops-cicd/.github/workflows/context_check.yaml@main
   check_if_instance_running:
-     runs-on: ubuntu-latest
-     steps:
-       - name: Configure AWS Credentials
-         uses: aws-actions/configure-aws-credentials@v1
-         with:
-           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-           aws-region: us-east-1
-       - name: Check instance
-         run: aws ec2 describe-instances --output text --filters Name=instance-id,Values=${{ secrets.INSTANCE_ID }} --query "Reservations[].Instances[].State[].Name[]"
+    needs: call_context_check
+    runs-on: ubuntu-latest
+    steps:
+     - name: Configure AWS Credentials
+       uses: aws-actions/configure-aws-credentials@v1
+       with:
+         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+         aws-region: us-east-1
+     - name: Check instance
+       run: aws ec2 describe-instances --output text --filters Name=instance-id,Values=${{ secrets.INSTANCE_ID }} --query "Reservations[].Instances[].State[].Name[]"

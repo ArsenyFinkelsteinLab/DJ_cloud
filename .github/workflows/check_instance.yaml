@@ -31,13 +31,18 @@ jobs:
          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
          aws-region: us-east-1
      - name: Check instance
+       id: check_instance
        run: |
          export STATE=$(aws ec2 describe-instances --output text --filters Name=instance-id,Values=${{ secrets.INSTANCE_ID }} --query "Reservations[].Instances[].State[].Name[]")
-         if [[ $STATE == running ]]; then
-            exit 1
-         else
-            exit 0
-         fi
+         echo "instance_state=$STATE" >> $GITHUB_OUTPUT
+     - name: Trigger process
+       if: ${{ steps.check_instance.outputs.instance_state }} == "stopped"
+       uses: ${{ github.repository }}/.github/workflows/start_process.yaml@main
+     - name: Instance is still running
+       if: ${{ steps.check_instance.outputs.instance_state }} == "running"
+       run: |
+         echo "INFO:: instance state is running"
+       
          
          
          

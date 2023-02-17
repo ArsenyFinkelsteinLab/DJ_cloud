@@ -1,4 +1,4 @@
-name: check_instance
+name: check_instance_and_start_process
 on:
   workflow_dispatch:
 concurrency: only_one_run_at_a_time

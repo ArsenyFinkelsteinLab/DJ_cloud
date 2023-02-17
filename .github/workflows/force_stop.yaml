@@ -1,4 +1,4 @@
-name: force_stop_process
+name: force_stop
 on:
   workflow_dispatch:
 jobs:

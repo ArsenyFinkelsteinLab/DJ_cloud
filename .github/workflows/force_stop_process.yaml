@@ -4,7 +4,7 @@ on:
 jobs:
   call_context_check:
     uses: dj-sciops/djsciops-cicd/.github/workflows/context_check.yaml@main
-  start_process:
+  force_stop_process:
     needs: call_context_check
     runs-on: ubuntu-latest
     env:

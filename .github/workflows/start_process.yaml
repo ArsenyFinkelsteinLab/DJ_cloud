@@ -1,24 +1,12 @@
 name: start_process
 on:
-    workflow_dispatch:
+    workflow_run:
+      workflows: ["check_instance"]
+      types:
+        - completed
 concurrency: only_one_run_at_a_time
 jobs:
-    check_your_permission:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout workflow repo
-              uses: actions/checkout@v3
-            - name: check your permission
-              run: |
-                  if grep -Fxq "$GITHUB_ACTOR" ./.github/workflows/start_process_allow_list
-                  then
-                      echo "INFO::Passed"
-                  else
-                      echo "ERROR::Please make a pull request to add your github username in '.github/workflows/start_process_allow_list'"
-                      exit 1
-                  fi
     call_context_check:
-        needs: check_your_permission
         uses: dj-sciops/djsciops-cicd/.github/workflows/context_check.yaml@main
     start_process:
         needs: call_context_check
@@ -55,22 +43,22 @@ jobs:
                     -o "ServerAliveInterval 43200" \
                     -o "ServerAliveCountMax 5" \
                     ubuntu@${INSTANCE_IP} \
-                    "sudo rm -rf /home/ubuntu/ArsenyLabWorkflow;git clone https://github.com/${GITHUB_REPOSITORY}.git /home/ubuntu/ArsenyLabWorkflow;bash /home/ubuntu/ArsenyLabWorkflow/entrypoint.sh; echo INFO_SSH_DONE" || true
-                  echo "INFO::process finished"
-            - name: fetch and store container logs
-              if: always()
-              run: |
-                  echo "INFO: fetch and store container logs"
-                  ssh -o "StrictHostKeyChecking no" ubuntu@${INSTANCE_IP} "bash /home/ubuntu/ArsenyLabWorkflow/fetch_log.sh ${REPO_NAME}" || true
-                  scp -r ubuntu@${INSTANCE_IP}:/tmp/${REPO_NAME}_Log /tmp/${REPO_NAME}_Log
-            - uses: actions/upload-artifact@v3
-              if: always()
-              with:
-                name: ${{ github.event.repository.name }}_Log
-                path: /tmp/${{ github.event.repository.name }}_Log
-            - name: stop worker instance
-              if: always()
-              run: |
-                  echo "INFO::stop worker instance"
-                  ssh -o "StrictHostKeyChecking no" ubuntu@${INSTANCE_IP} "sudo shutdown now" || true
-                  echo "INFO::instance stopped"
+                    "sudo rm -rf /home/ubuntu/ArsenyLabWorkflow;git clone https://github.com/${GITHUB_REPOSITORY}.git /home/ubuntu/ArsenyLabWorkflow;screen -d -m bash /home/ubuntu/ArsenyLabWorkflow/entrypoint.sh;"
+                  echo "INFO::process started"
+#             - name: fetch and store container logs
+#               if: always()
+#               run: |
+#                   echo "INFO: fetch and store container logs"
+#                   ssh -o "StrictHostKeyChecking no" ubuntu@${INSTANCE_IP} "bash /home/ubuntu/ArsenyLabWorkflow/fetch_log.sh ${REPO_NAME}" || true
+#                   scp -r ubuntu@${INSTANCE_IP}:/tmp/${REPO_NAME}_Log /tmp/${REPO_NAME}_Log
+#             - uses: actions/upload-artifact@v3
+#               if: always()
+#               with:
+#                 name: ${{ github.event.repository.name }}_Log
+#                 path: /tmp/${{ github.event.repository.name }}_Log
+#             - name: stop worker instance
+#               if: always()
+#               run: |
+#                   echo "INFO::stop worker instance"
+#                   ssh -o "StrictHostKeyChecking no" ubuntu@${INSTANCE_IP} "sudo shutdown now" || true
+#                   echo "INFO::instance stopped"

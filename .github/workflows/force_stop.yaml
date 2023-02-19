@@ -2,6 +2,20 @@ name: force_stop
 on:
   workflow_dispatch:
 jobs:
+  check_your_permission:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout workflow repo
+        uses: actions/checkout@v3
+      - name: check your permission
+        run: |
+          if grep -Fxq "$GITHUB_ACTOR" ./.github/workflows/start_process_allow_list
+          then
+              echo "INFO::Passed"
+          else
+              echo "ERROR::Please make a pull request to add your github username in '.github/workflows/start_process_allow_list'"
+              exit 1
+          fi
   call_context_check:
     uses: dj-sciops/djsciops-cicd/.github/workflows/context_check.yaml@main
   force_stop_process:

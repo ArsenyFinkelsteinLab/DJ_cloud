@@ -17,6 +17,7 @@ jobs:
               exit 1
           fi
   call_context_check:
+    needs: check_your_permission
     uses: dj-sciops/djsciops-cicd/.github/workflows/context_check.yaml@main
   force_stop_process:
     needs: call_context_check

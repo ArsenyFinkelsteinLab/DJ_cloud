@@ -1,0 +1,59 @@
+name: start
+on:
+  workflow_dispatch:
+concurrency: only_one_run_at_a_time
+jobs:
+  check_your_permission:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout workflow repo
+        uses: actions/checkout@v3
+      - name: check your permission
+        run: |
+          if grep -Fxq "$GITHUB_ACTOR" ./.github/workflows/start_process_allow_list
+          then
+              echo "INFO::Passed"
+          else
+              echo "ERROR::Please make a pull request to add your github username in '.github/workflows/start_process_allow_list'"
+              exit 1
+          fi
+  call_context_check:
+    needs: check_your_permission
+    uses: dj-sciops/djsciops-cicd/.github/workflows/context_check.yaml@main
+  check_if_instance_running:
+    needs: call_context_check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+         aws-region: us-east-1
+      - name: Check instance state
+        id: check_instance_state
+        run: |
+         export STATE=$(aws ec2 describe-instances --output text --filters Name=instance-id,Values=${{ secrets.INSTANCE_ID }} --query "Reservations[].Instances[].State[].Name[]")
+         echo $STATE
+         echo "instance_state=$STATE" >> $GITHUB_OUTPUT
+      - name: Instance is running
+        if: steps.check_instance_state.outputs.instance_state == 'running'
+        run: |
+         echo "INFO:: Instance is still running"
+         exit 1
+    outputs:
+      instance_state: ${{ steps.check_instance_state.outputs.instance_state }}
+  trigger_process:
+    needs: check_if_instance_running
+    if: needs.check_if_instance_running.outputs.instance_state == 'stopped'
+    uses: ./.github/workflows/start_process.yaml
+    secrets:
+      INSTANCE_ID: ${{ secrets.INSTANCE_ID }}
+      INSTANCE_IP: ${{ secrets.INSTANCE_IP }}
+      SSH_KEY: ${{ secrets.SSH_KEY }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+         
+         
+         

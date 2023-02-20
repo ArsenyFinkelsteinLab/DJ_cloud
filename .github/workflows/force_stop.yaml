@@ -1,0 +1,40 @@
+name: force_stop
+on:
+  workflow_dispatch:
+jobs:
+  check_your_permission:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout workflow repo
+        uses: actions/checkout@v3
+      - name: check your permission
+        run: |
+          if grep -Fxq "$GITHUB_ACTOR" ./.github/workflows/start_process_allow_list
+          then
+              echo "INFO::Passed"
+          else
+              echo "ERROR::Please make a pull request to add your github username in '.github/workflows/start_process_allow_list'"
+              exit 1
+          fi
+  call_context_check:
+    needs: check_your_permission
+    uses: dj-sciops/djsciops-cicd/.github/workflows/context_check.yaml@main
+  force_stop_process:
+    needs: call_context_check
+    runs-on: ubuntu-latest
+    env:
+      INSTANCE_ID: ${{ secrets.INSTANCE_ID }}
+      INSTANCE_IP: ${{ secrets.INSTANCE_IP }}
+      SSH_KEY: ${{ secrets.SSH_KEY }}
+      REPO_NAME: ${{ github.event.repository.name }}
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: force stop worker instance
+        run: |
+          echo "INFO::start worker instance"
+          aws ec2 stop-instances --instance-ids ${INSTANCE_ID}

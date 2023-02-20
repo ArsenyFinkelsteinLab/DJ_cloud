@@ -20,3 +20,8 @@ sleep 20
 echo "----- Cleanup Docker -----"
 docker compose --env-file=../../.env  -f docker-compose-standard_worker.yaml down
 docker system prune -a -f --volumes
+
+#sleep 10 # test
+
+echo "----- Shutdown server -----"
+sudo shutdown now

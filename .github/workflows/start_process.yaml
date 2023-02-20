@@ -52,20 +52,3 @@ jobs:
             ubuntu@${INSTANCE_IP} \
             "sudo rm -rf /home/ubuntu/ArsenyLabWorkflow;git clone https://github.com/${GITHUB_REPOSITORY}.git /home/ubuntu/ArsenyLabWorkflow;screen -d -m bash /home/ubuntu/ArsenyLabWorkflow/entrypoint.sh;"
           echo "INFO::process started"
-#       - name: fetch and store container logs
-#         if: always()
-#         run: |
-#             echo "INFO: fetch and store container logs"
-#             ssh -o "StrictHostKeyChecking no" ubuntu@${INSTANCE_IP} "bash /home/ubuntu/ArsenyLabWorkflow/fetch_log.sh ${REPO_NAME}" || true
-#             scp -r ubuntu@${INSTANCE_IP}:/tmp/${REPO_NAME}_Log /tmp/${REPO_NAME}_Log
-#       - uses: actions/upload-artifact@v3
-#         if: always()
-#         with:
-#           name: ${{ github.event.repository.name }}_Log
-#           path: /tmp/${{ github.event.repository.name }}_Log
-#       - name: stop worker instance
-#         if: always()
-#         run: |
-#             echo "INFO::stop worker instance"
-#             ssh -o "StrictHostKeyChecking no" ubuntu@${INSTANCE_IP} "sudo shutdown now" || true
-#             echo "INFO::instance stopped"

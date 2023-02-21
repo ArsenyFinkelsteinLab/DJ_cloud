@@ -39,7 +39,12 @@ jobs:
       - name: Instance is running
         if: steps.check_instance_state.outputs.instance_state == 'running'
         run: |
-         echo "INFO:: Instance is still running"
+         echo "INFO:: Instance is still running, wait for the current process to finish or you can trigger 'force_stop' to stop the current process"
+         exit 1
+      - name: Instance is running
+        if: steps.check_instance_state.outputs.instance_state == 'stopping'
+        run: |
+         echo "INFO:: Instance is still stopping, give it a minute and then trigger 'start' again"
          exit 1
     outputs:
       instance_state: ${{ steps.check_instance_state.outputs.instance_state }}

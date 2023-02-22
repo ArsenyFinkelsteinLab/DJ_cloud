@@ -55,10 +55,10 @@ standard_worker = DataJointWorker('standard_worker',
 
 ###### MESO LDS
 #meso_LDS.SVDLDS.key_source &= {'observed_dim': '80', 'latent_dim': '60'}
-#standard_worker(meso_LDS.SVDLDS)
+standard_worker(meso_LDS.SVDLDS)
 
 ###### MESO SVD Partition
-standard_worker(meso_svd_part.ROISVDPartition1)
+#standard_worker(meso_svd_part.ROISVDPartition1)
 
 ###### MESO SVD Autocorr
 #analysis_meso_svd.SVDTemporalComponentsAutocorr3.key_source &= {'subject_id': '463189'}

@@ -9,6 +9,7 @@ from workflow.pipeline import analysis_pop_area
 from workflow.pipeline import meso_svd_autocorr
 from workflow.pipeline import meso_svd_area_autocorr
 from workflow.pipeline import meso_LDS
+from workflow.pipeline import meso_svd_behav_part
 
 # from workflow.pipeline import analysis_new   # import another schema in the future
 
@@ -48,14 +49,16 @@ standard_worker = DataJointWorker('standard_worker',
 #standard_worker(analysis_pop.ROISVDPython)
 
 
+###### MESO SVD Behav Partition
+standard_worker(meso_svd_behav_part.ROISVDBehavPartition1)
 
 ###### MESO SVD
 #analysis_meso_svd.ROISVDPython.key_source &= {'subject_id': '464724'}
 #standard_worker(analysis_meso_svd.ROISVD)
 
 ###### MESO LDS
-meso_LDS.SVDLDS.key_source &= {'observed_dim': '80', 'latent_dim': '60'}
-standard_worker(meso_LDS.SVDLDS)
+#meso_LDS.SVDLDS.key_source &= {'observed_dim': '80', 'latent_dim': '60'}
+#standard_worker(meso_LDS.SVDLDS)
 
 ###### MESO SVD Partition
 #standard_worker(analysis_meso_svd_part.ROISVDPartition)

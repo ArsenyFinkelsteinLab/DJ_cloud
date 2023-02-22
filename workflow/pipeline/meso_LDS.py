@@ -37,13 +37,13 @@ class SVDLDS(dj.Computed):
 
     def make(self, key):
 
-        session_epoch_type = key['session_epoch_type']
-        if session_epoch_type == 'spont_only':
-            observed_dim_vals = [30]
-            latent_dim_vals = [20]
-        else:
-            observed_dim_vals = [80]
-            latent_dim_vals = [60]
+ %       session_epoch_type = key['session_epoch_type']
+ %       if session_epoch_type == 'spont_only':
+ %           observed_dim_vals = [30]
+ %           latent_dim_vals = [20]
+ %       else:
+        observed_dim_vals = [120]
+        latent_dim_vals = [80]
 
         for observed_dim in observed_dim_vals:
             for latent_dim in latent_dim_vals:
@@ -52,6 +52,9 @@ class SVDLDS(dj.Computed):
                 rel = rel_comp & key & 'time_bin = 0' & 'threshold_for_event = 0'
                 temporal_components = rel.fetch('temporal_component', order_by='component_id')
                 data = np.vstack(temporal_components).T
+                
+                if temporal_components[0].size < 9000:
+                    return
 
                 lds = ssm.LDS(observed_dim, latent_dim, emissions="gaussian")
                 elbos, q = lds.fit(data, method="laplace_em", num_iters=30)

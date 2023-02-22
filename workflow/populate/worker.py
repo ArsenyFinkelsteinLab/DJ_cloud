@@ -49,9 +49,6 @@ standard_worker = DataJointWorker('standard_worker',
 #standard_worker(analysis_pop.ROISVDPython)
 
 
-###### MESO SVD Behav Partition
-standard_worker(meso_svd_behav_part.ROISVDBehavPartition1)
-
 ###### MESO SVD
 #analysis_meso_svd.ROISVDPython.key_source &= {'subject_id': '464724'}
 #standard_worker(analysis_meso_svd.ROISVD)
@@ -61,7 +58,7 @@ standard_worker(meso_svd_behav_part.ROISVDBehavPartition1)
 #standard_worker(meso_LDS.SVDLDS)
 
 ###### MESO SVD Partition
-#standard_worker(analysis_meso_svd_part.ROISVDPartition)
+standard_worker(meso_svd_part.ROISVDPartition1)
 
 ###### MESO SVD Autocorr
 #analysis_meso_svd.SVDTemporalComponentsAutocorr3.key_source &= {'subject_id': '463189'}

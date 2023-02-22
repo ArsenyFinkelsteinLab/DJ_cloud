@@ -108,8 +108,8 @@ class ROISVDBehavPartition1(dj.Computed):
     def compute_SVD(self, self2, self3, self4, self5, self6, self7, self8, self9, key, rel_data1, flag_zscore, time_bin, thresholds_for_event, threshold_variance_explained, num_components_save):
         
         session_epoch_type = key['session_epoch_type']
-        # if session_epoch_type == 'spont_only':
-        #     return
+        if session_epoch_type == 'spont_only':
+            return
         
         rel_FOVEpoch = img.FOVEpoch & key
         rel_FOV = img.FOV & key

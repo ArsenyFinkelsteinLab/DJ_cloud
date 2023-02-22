@@ -9,7 +9,7 @@ from workflow.pipeline import analysis_pop_area
 from workflow.pipeline import meso_svd_autocorr
 from workflow.pipeline import meso_svd_area_autocorr
 from workflow.pipeline import meso_LDS
-from workflow.pipeline import meso_svd_behav_part
+from workflow.pipeline import meso_svd_part
 
 # from workflow.pipeline import analysis_new   # import another schema in the future
 

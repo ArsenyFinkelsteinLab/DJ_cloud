@@ -89,8 +89,8 @@ class ROISVDArea2(dj.Computed):
         threshold_variance_explained = 0.9
         num_components_save = 500
 
-        self2 = SVDAreaSingularValues
-        self3 = SVDAreaTemporalComponents
+        self2 = SVDAreaSingularValues2
+        self3 = SVDAreaTemporalComponents2
         for i, time_bin in enumerate(time_bin_vector):
             self.compute_SVD(self2, self3, key, flag_zscore, time_bin, thresholds_for_event, threshold_variance_explained, num_components_save)
 

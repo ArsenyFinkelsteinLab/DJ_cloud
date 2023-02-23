@@ -123,6 +123,9 @@ class ROISVDArea2(dj.Computed):
         if ntimepoints < 2500:
           return
         
+        nneurons = 500
+        ntimepoints = 2500
+        
         F_binned = F_binned[:500-1, :2500-1]
         
         for threshold in thresholds_for_event:
@@ -139,16 +142,14 @@ class ROISVDArea2(dj.Computed):
             u_limited = [ui[:num_comp] for ui in u]
             vt = vh[:num_components_save]
 
-            # Populating POP.ROISVDPython
             key_ROIs = (rel_data_area & key).fetch('KEY', order_by='roi_number')
-            for i in range(len(key_ROIs)):
+            for i in range(500):
                 key_ROIs[i]['roi_components'] = u_limited[i]
                 key_ROIs[i]['time_bin'] = time_bin
                 key_ROIs[i]['threshold_for_event'] = threshold
 
             InsertChunked(self, key_ROIs, 1000)
 
-            # Populating POP.SVDAreaSingularValues and POP.SVDAreaTemporalComponents
             svd_key = {**key, 'time_bin': time_bin, 'threshold_for_event': threshold}
             self2.insert1({**svd_key, 'singular_values': s}, allow_direct_insert=True)
             key_temporal = [{**svd_key, 'component_id': ic, 'temporal_component': vt[ic]}

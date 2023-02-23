@@ -51,7 +51,7 @@ standard_worker = DataJointWorker('standard_worker',
 
 ###### MESO SVD
 #analysis_meso_svd.ROISVDPython.key_source &= {'subject_id': '464724'}
-#standard_worker(analysis_meso_svd.ROISVD)
+standard_worker(analysis_meso_svd.ROISVD)
 
 ###### MESO LDS
 #meso_LDS.SVDLDS.key_source &= {'observed_dim': '80', 'latent_dim': '60'}

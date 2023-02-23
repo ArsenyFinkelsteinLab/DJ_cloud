@@ -46,7 +46,7 @@ class SVDTemporalComponentsAutocorr3(dj.Computed):
 
                 key['time_bin'] = time_bin
                 key['threshold'] = threshold
-                rel_comp = meso.SVDTemporalComponentsPython & key
+                rel_comp = meso.SVDTemporalComponents & key
                 temporal_components = np.asarray(rel_comp.fetch('temporal_component', order_by='component_id'))
                 num_comp = temporal_components.shape[0]
 

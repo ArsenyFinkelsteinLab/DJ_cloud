@@ -43,7 +43,7 @@ class SVDLDS(dj.Computed):
  #           latent_dim_vals = [20]
  #       else:
         observed_dim_vals = [90]
-        latent_dim_vals = [80]
+        latent_dim_vals = [60]
 
         for observed_dim in observed_dim_vals:
             for latent_dim in latent_dim_vals:

@@ -26,7 +26,7 @@ class SVDTemporalComponentsAutocorr3(dj.Computed):
 
     @property
     def key_source(self):
-        return (exp2.SessionEpoch & meso.SVDTemporalComponentsPython & img.Mesoscope)
+        return (exp2.SessionEpoch & meso.SVDTemporalComponents & img.Mesoscope)
 
     def make(self, key):
 

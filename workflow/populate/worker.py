@@ -73,7 +73,7 @@ standard_worker = DataJointWorker('standard_worker',
 #standard_worker(meso_svd_area2.ROISVDArea2)
 
 ###### Area SVD shuffled
-meso_area_shuffle.SVDAreaShuffle.key_source &= {'subject_id': '464724', 'session': '1'}
+#meso_area_shuffle.SVDAreaShuffle.key_source &= {'subject_id': '464724', 'session': '1'}
 standard_worker(meso_area_shuffle.SVDAreaShuffle)
 
 

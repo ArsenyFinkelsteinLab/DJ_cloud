@@ -92,7 +92,7 @@ class SVDAreaShuffle(dj.Computed):
         time_bin = 0
         flag_zscore = 1
         num_ROIs = 500
-        num_realizations = 1000
+        num_realizations = 100
 
         for realization in range(num_realizations):
             self.compute_SVD(key, flag_zscore, time_bin, threshold_for_event, realization, num_ROIs)

@@ -8,14 +8,6 @@ from bisect import bisect
 import math
 from math import *
 
-dj.config['database.host'] = 'datajoint.mesoscale-activity-map.org'
-
-# arseny
-dj.config['database.user'] = 'lee'
-# ars1dat2
-dj.config['database.password'] = 'simple'
-
-
 schema = dj.Schema('lee_meso_analysis')
 
 exp2 = dj.VirtualModule('exp2', 'arseny_s1alm_experiment2')

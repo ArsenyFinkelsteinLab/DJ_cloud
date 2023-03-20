@@ -10,10 +10,6 @@ import autograd.numpy.random as npr
 
 import ssm
 
-dj.config['database.host'] = 'datajoint.mesoscale-activity-map.org'
-dj.config['database.user'] = 'lee'
-dj.config['database.password'] = 'simple'
-
 schema = dj.Schema('lee_meso_analysis')
 
 exp2 = dj.VirtualModule('exp2', 'arseny_s1alm_experiment2')

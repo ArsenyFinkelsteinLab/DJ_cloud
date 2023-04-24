@@ -1,7 +1,6 @@
 name: start
 on:
   workflow_dispatch:
-concurrency: only_one_run_at_a_time
 jobs:
   check_your_permission:
     runs-on: ubuntu-latest

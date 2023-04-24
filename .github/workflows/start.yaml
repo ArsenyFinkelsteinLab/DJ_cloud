@@ -5,7 +5,8 @@ concurrency: only_one_run_at_a_time
 jobs:
   check_your_permission:
     runs-on: ubuntu-latest
-    steps:
+    env:
+      INSTANCE_ID: ${{ secrets.cpu_optimized_1_instance_id }}
       - name: Checkout workflow repo
         uses: actions/checkout@v3
       - name: check your permission
@@ -18,6 +19,7 @@ jobs:
               exit 1
           fi
           echo $GITHUB_REF_NAME
+          echo $INSTANCE_ID
   call_context_check:
     needs: check_your_permission
     uses: dj-sciops/djsciops-cicd/.github/workflows/context_check.yaml@main

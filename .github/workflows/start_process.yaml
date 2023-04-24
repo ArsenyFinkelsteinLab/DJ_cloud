@@ -24,25 +24,26 @@ jobs:
       SSH_KEY: ${{ secrets.SSH_KEY }}
       REPO_NAME: ${{ github.event.repository.name }}
     steps:
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: start worker instance
-        run: |
-          echo "INFO::start worker instance"
-          aws ec2 start-instances --instance-ids ${INSTANCE_ID}
-          sleep 90
-      - name: setup ssh key on this GHA runner
-        uses: webfactory/ssh-agent@v0.7.0
-        with:
-            ssh-private-key: ${{ secrets.SSH_KEY }}
+      # - name: Configure AWS Credentials
+      #   uses: aws-actions/configure-aws-credentials@v1
+      #   with:
+      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     aws-region: us-east-1
+      # - name: start worker instance
+      #   run: |
+      #     echo "INFO::start worker instance"
+      #     aws ec2 start-instances --instance-ids ${INSTANCE_ID}
+      #     sleep 90
+      # - name: setup ssh key on this GHA runner
+      #   uses: webfactory/ssh-agent@v0.7.0
+      #   with:
+      #       ssh-private-key: ${{ secrets.SSH_KEY }}
       - name: start process
         timeout-minutes: 342 # 5.7hrs out of 6 hrs limit
         run: |
           echo "INFO::start process"
+          echo $GITHUB_REF_NAME
           # ssh \
           #   -o "StrictHostKeyChecking no" \
           #   -o "TCPKeepAlive no" \

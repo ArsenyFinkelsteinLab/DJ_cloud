@@ -43,12 +43,12 @@ jobs:
         timeout-minutes: 342 # 5.7hrs out of 6 hrs limit
         run: |
           echo "INFO::start process"
-          ssh \
-            -o "StrictHostKeyChecking no" \
-            -o "TCPKeepAlive no" \
-            -o "IPQoS throughput" \
-            -o "ServerAliveInterval 43200" \
-            -o "ServerAliveCountMax 5" \
-            ubuntu@${INSTANCE_IP} \
-            "sudo rm -rf /home/ubuntu/ArsenyLabWorkflow;git clone https://github.com/${GITHUB_REPOSITORY}.git /home/ubuntu/ArsenyLabWorkflow;screen -d -m bash /home/ubuntu/ArsenyLabWorkflow/entrypoint.sh;"
+          # ssh \
+          #   -o "StrictHostKeyChecking no" \
+          #   -o "TCPKeepAlive no" \
+          #   -o "IPQoS throughput" \
+          #   -o "ServerAliveInterval 43200" \
+          #   -o "ServerAliveCountMax 5" \
+          #   ubuntu@${INSTANCE_IP} \
+          #   "sudo rm -rf /home/ubuntu/ArsenyLabWorkflow;git clone https://github.com/${GITHUB_REPOSITORY}.git /home/ubuntu/ArsenyLabWorkflow;screen -d -m bash /home/ubuntu/ArsenyLabWorkflow/entrypoint.sh;"
           echo "INFO::process started"

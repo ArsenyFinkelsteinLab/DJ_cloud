@@ -1,7 +1,6 @@
 name: start
 on:
   workflow_dispatch:
-concurrency: only_one_run_at_a_time
 jobs:
   check_your_permission:
     runs-on: ubuntu-latest
@@ -23,6 +22,8 @@ jobs:
   check_if_instance_running:
     needs: call_context_check
     runs-on: ubuntu-latest
+    env:
+      INSTANCE_ID: ${{ secrets[format('{0}_instance_id', github.ref_name)] }}
     steps:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -33,7 +34,8 @@ jobs:
       - name: Check instance state
         id: check_instance_state
         run: |
-         export STATE=$(aws ec2 describe-instances --output text --filters Name=instance-id,Values=${{ secrets.INSTANCE_ID }} --query "Reservations[].Instances[].State[].Name[]")
+         [ -z "$INSTANCE_ID" ] && echo "ERROR::Can't find an instance for deployment branch: $GITHUB_REF_NAME" && exit 1
+         export STATE=$(aws ec2 describe-instances --output text --filters Name=instance-id,Values=$INSTANCE_ID --query "Reservations[].Instances[].State[].Name[]")
          echo $STATE
          echo "instance_state=$STATE" >> $GITHUB_OUTPUT
       - name: Instance is running
@@ -53,8 +55,8 @@ jobs:
     if: needs.check_if_instance_running.outputs.instance_state == 'stopped'
     uses: ./.github/workflows/start_process.yaml
     secrets:
-      INSTANCE_ID: ${{ secrets.INSTANCE_ID }}
-      INSTANCE_IP: ${{ secrets.INSTANCE_IP }}
+      INSTANCE_ID: ${{ secrets[format('{0}_instance_id', github.ref_name)] }}
+      INSTANCE_IP: ${{ secrets[format('{0}_instance_ip', github.ref_name)] }}
       SSH_KEY: ${{ secrets.SSH_KEY }}
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

@@ -6,7 +6,7 @@ jobs:
   check_your_permission:
     runs-on: ubuntu-latest
     env:
-      INSTANCE_ID: ${{ secrets[format("{0}_instance_id", github.ref_name)] }}
+      INSTANCE_ID: ${{ secrets[format('{0}_instance_id', github.ref_name)] }}
     steps:
       - name: Checkout workflow repo
         uses: actions/checkout@v3

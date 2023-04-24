@@ -6,7 +6,7 @@ jobs:
   check_your_permission:
     runs-on: ubuntu-latest
     env:
-      INSTANCE_ID: ${{ secrets.INSTANCE_ID }}
+      INSTANCE_ID: ${{ secrets.cpu_optimized_instance_id }}
     steps:
       - name: Checkout workflow repo
         uses: actions/checkout@v3

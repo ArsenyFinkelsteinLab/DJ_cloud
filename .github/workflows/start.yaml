@@ -6,7 +6,7 @@ jobs:
   check_your_permission:
     runs-on: ubuntu-latest
     env:
-      INSTANCE_ID: ${{ secrets.cpu_optimized_instance_id }}
+      INSTANCE_ID: ${{ secrets.cpu_optimized_1_instance_id }}
     steps:
       - name: Checkout workflow repo
         uses: actions/checkout@v3
@@ -19,8 +19,9 @@ jobs:
               echo "ERROR::Please make a pull request to add your github username in '.github/workflows/start_process_allow_list'"
               exit 1
           fi
-          echo $GITHUB_REF_NAME
+          echo ${GITHUB_REF_NAME^^}"
           echo $INSTANCE_ID
+
   call_context_check:
     needs: check_your_permission
     uses: dj-sciops/djsciops-cicd/.github/workflows/context_check.yaml@main

@@ -19,7 +19,7 @@ jobs:
               echo "ERROR::Please make a pull request to add your github username in '.github/workflows/start_process_allow_list'"
               exit 1
           fi
-          echo ${GITHUB_REF_NAME^^}"
+          echo ${GITHUB_REF_NAME^^}
           echo $INSTANCE_ID
 
   call_context_check:

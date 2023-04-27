@@ -2,9 +2,9 @@
 
 cd ~
 
-# copy in the .env file - this file is manually created and placed in this EC2 instance
-echo "----- Copy .env file -----"
-cp .FinkelsteinLab.env ArsenyLabWorkflow/docker/standard_worker/.env
+# # copy in the .env file - this file is manually created and placed in this EC2 instance
+# echo "----- Copy .env file -----"
+# cp .FinkelsteinLab.env ArsenyLabWorkflow/docker/standard_worker/.env
 
 # build and start the container
 cd ArsenyLabWorkflow/docker/standard_worker/dist/debian

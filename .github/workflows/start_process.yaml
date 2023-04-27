@@ -50,5 +50,5 @@ jobs:
             -o "ServerAliveInterval 43200" \
             -o "ServerAliveCountMax 5" \
             ubuntu@${INSTANCE_IP} \
-            "sudo rm -rf /home/ubuntu/ArsenyLabWorkflow;git clone https://github.com/${GITHUB_REPOSITORY}.git /home/ubuntu/ArsenyLabWorkflow;screen -d -m bash /home/ubuntu/ArsenyLabWorkflow/entrypoint.sh;"
+            "sudo rm -rf /home/ubuntu/ArsenyLabWorkflow;git clone -b $GITHUB_REF_NAME https://github.com/${GITHUB_REPOSITORY}.git /home/ubuntu/ArsenyLabWorkflow;screen -d -m bash /home/ubuntu/ArsenyLabWorkflow/entrypoint.sh;"
           echo "INFO::process started"

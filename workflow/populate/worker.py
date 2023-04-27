@@ -56,8 +56,8 @@ standard_worker = DataJointWorker('standard_worker',
 #standard_worker(analysis_meso_svd.ROISVD)
 
 ###### MESO LDS
-#meso_LDS.SVDLDS.key_source &= {'observed_dim': '80', 'latent_dim': '60'}
-# standard_worker(meso_LDS.SVDLDS)
+meso_LDS.SVDLDS.key_source &= {'observed_dim': '80', 'latent_dim': '60'}
+standard_worker(meso_LDS.SVDLDS)
 
 ###### MESO SVD Partition
 #standard_worker(meso_svd_part.ROISVDPartition1)
@@ -98,11 +98,3 @@ standard_worker = DataJointWorker('standard_worker',
 
 # arseny_worker(analysis_new.FutureNewAnalysisTable, max_calls=20)
 # arseny_worker(analysis_new.TableAnalysis, max_calls=20)
-
-# 
-
-def hello_world():
-    print("Hello World")
-
-
-standard_worker(hello_world)

@@ -12,6 +12,7 @@ from workflow.pipeline import meso_LDS
 from workflow.pipeline import meso_svd_part
 from workflow.pipeline import meso_svd_area2
 from workflow.pipeline import meso_area_shuffle
+from workflow.pipeline import area_svd_LDS
 
 # from workflow.pipeline import analysis_new   # import another schema in the future
 
@@ -60,8 +61,8 @@ standard_worker = DataJointWorker('standard_worker',
 # standard_worker(meso_LDS.SVDLDS)
 
 ###### Area LDS
-area_svd_LDS.AreaSVDLDS.key_source &= {'observed_dim': '80', 'latent_dim': '60'}
-standard_worker(meso_LDS.SVDLDS)
+# area_svd_LDS.AreaSVDLDS.key_source &= {'observed_dim': '80', 'latent_dim': '60'}
+standard_worker(area_svd_LDS.AreaSVDLDS)
 
 ###### MESO SVD Partition
 #standard_worker(meso_svd_part.ROISVDPartition1)

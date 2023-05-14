@@ -19,7 +19,7 @@ lab = dj.VirtualModule('lab', 'map_lab')
 
 
 @schema
-class SVDLDS(dj.Computed):
+class AreaSVDLDS(dj.Computed):
     definition = """
     -> exp2.SessionEpoch
     -> lab.BrainArea

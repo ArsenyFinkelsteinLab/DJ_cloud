@@ -60,7 +60,7 @@ standard_worker = DataJointWorker('standard_worker',
 # meso_LDS.SVDLDS.key_source &= {'observed_dim': '80', 'latent_dim': '60'}
 # standard_worker(meso_LDS.SVDLDS)
 
-standard_worker(area_svd_LDS.AreaSVDLDS)
+#standard_worker(area_svd_LDS.AreaSVDLDS)
 
 ###### MESO SVD Partition
 #standard_worker(meso_svd_part.ROISVDPartition1)
@@ -82,7 +82,7 @@ standard_worker(area_svd_LDS.AreaSVDLDS)
 
 ###### Per-area SVD Autocorr
 #analysis_pop_area.ROISVDArea.key_source &= {'subject_id': '464725'}
-#standard_worker(meso_svd_area_autocorr.SVDAreaTemporalComponentsAutocorr)
+standard_worker(meso_svd_area_autocorr.SVDAreaTemporalComponentsAutocorr)
 
 
 #### Shared variance computation

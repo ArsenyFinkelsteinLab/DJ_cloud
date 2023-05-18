@@ -7,6 +7,7 @@ from math import *
 
 import autograd.numpy as np
 import autograd.numpy.random as npr
+from datajoint.logging import logger
 
 import ssm
 
@@ -49,6 +50,8 @@ class AreaSVDLDS(dj.Computed):
                 
                 if temporal_components[0].size < 2000:
                     return
+                
+                logger.info("Latent dim = %d",latent_dim)
 
                 lds = ssm.LDS(observed_dim, latent_dim, emissions="gaussian")
                 elbos, q = lds.fit(data, method="laplace_em", num_iters=30)

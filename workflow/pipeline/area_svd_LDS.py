@@ -54,7 +54,7 @@ class AreaSVDLDS(dj.Computed):
                 logger.info("Latent dim = %d",latent_dim)
 
                 lds = ssm.LDS(observed_dim, latent_dim, emissions="gaussian")
-                elbos, q = lds.fit(data, method="laplace_em", num_iters=30)
+                elbos, q = lds.fit(data, method="laplace_em", num_iters=10)
 
                 A_est = lds.dynamics.A
                 

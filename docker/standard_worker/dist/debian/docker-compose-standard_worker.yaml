@@ -11,6 +11,7 @@ services:
         - WORKER_BASE_HASH
         - REPO_OWNER
         - REPO_NAME
+        - BRANCH_NAME
 #    image: standard_${REPO_NAME}:py${PY_VER}-debian-${WORKFLOW_VERSION}
     environment:
       - CONTAINER_USER

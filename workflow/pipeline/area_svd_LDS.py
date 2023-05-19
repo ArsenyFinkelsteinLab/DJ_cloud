@@ -7,7 +7,7 @@ from math import *
 
 import autograd.numpy as np
 import autograd.numpy.random as npr
-
+from datajoint.logging import logger
 import ssm
 
 schema = dj.Schema('lee_meso_analysis')
@@ -15,12 +15,14 @@ schema = dj.Schema('lee_meso_analysis')
 exp2 = dj.VirtualModule('exp2', 'arseny_s1alm_experiment2')
 img = dj.VirtualModule('img', 'arseny_learning_imaging')
 meso = dj.VirtualModule('meso', 'lee_meso_analysis')
+lab = dj.VirtualModule('lab', 'map_lab')
 
 
 @schema
-class SVDLDS(dj.Computed):
+class AreaSVDLDS(dj.Computed):
     definition = """
     -> exp2.SessionEpoch
+    -> lab.BrainArea
     observed_dim         : int                          # number of observed PC dimensions
     latent_dim           : int                          # dimension of inferred LDS
     ---
@@ -29,28 +31,26 @@ class SVDLDS(dj.Computed):
 
     @property
     def key_source(self):
-        return (exp2.SessionEpoch & meso.SVDTemporalComponents)
+        return (exp2.SessionEpoch*lab.BrainArea & meso.SVDAreaTemporalComponents)
 
     def make(self, key):
 
         session_epoch_type = key['session_epoch_type']
- #       if session_epoch_type == 'spont_only':
- #           observed_dim_vals = [30]
- #           latent_dim_vals = [20]
- #       else:
         observed_dim_vals = [25]
         latent_dim_vals = [20]
 
         for observed_dim in observed_dim_vals:
             for latent_dim in latent_dim_vals:
                 
-                rel_comp = meso.SVDTemporalComponents & 'component_id<%d' % observed_dim
+                rel_comp = meso.SVDAreaTemporalComponents & 'component_id<%d' % observed_dim
                 rel = rel_comp & key & 'time_bin = 0' & 'threshold_for_event = 0'
                 temporal_components = rel.fetch('temporal_component', order_by='component_id')
                 data = np.vstack(temporal_components).T
                 
-                if temporal_components[0].size < 2500:
+                if temporal_components[0].size < 2000:
                     return
+
+                logger.info("Latent dim = %d",latent_dim)
 
                 lds = ssm.LDS(observed_dim, latent_dim, emissions="gaussian")
                 elbos, q = lds.fit(data, method="laplace_em", num_iters=30)

@@ -50,5 +50,12 @@ jobs:
             -o "ServerAliveInterval 43200" \
             -o "ServerAliveCountMax 5" \
             ubuntu@${INSTANCE_IP} \
-            "sudo rm -rf /home/ubuntu/ArsenyLabWorkflow;git clone -b $GITHUB_REF_NAME https://github.com/${GITHUB_REPOSITORY}.git /home/ubuntu/ArsenyLabWorkflow;cp .FinkelsteinLab.env ArsenyLabWorkflow/docker/standard_worker/.env; sed -i 's/REPO_OWNER=ArsenyFinkelsteinLab/REPO_OWNER=${GITHUB_REPOSITORY_OWNER}/g' ArsenyLabWorkflow/docker/standard_worker/.env;screen -d -m bash /home/ubuntu/ArsenyLabWorkflow/entrypoint.sh;"
+            "sudo rm -rf /home/ubuntu/ArsenyLabWorkflow; \
+             git clone -b $GITHUB_REF_NAME https://github.com/${GITHUB_REPOSITORY}.git /home/ubuntu/ArsenyLabWorkflow; \
+             cp .FinkelsteinLab.env ArsenyLabWorkflow/docker/standard_worker/.env; \
+             sed -i 's/REPO_OWNER=ArsenyFinkelsteinLab/REPO_OWNER=${GITHUB_REPOSITORY_OWNER}/g' ArsenyLabWorkflow/docker/standard_worker/.env; \
+             sed -i 's/REPO_NAME=DJ_Cloud/REPO_Name=${{github.repository}}/g' ArsenyLabWorkflow/docker/standard_worker/.env; \
+             sed -i 's/BRANCH_NAME=main/BRANCH_NAME=${GITHUB_REF_NAME}/g' ArsenyLabWorkflow/docker/standard_worker/.env; \
+             screen -d -m bash /home/ubuntu/ArsenyLabWorkflow/entrypoint.sh; \
+            "
           echo "INFO::process started"

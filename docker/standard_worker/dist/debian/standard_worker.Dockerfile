@@ -10,13 +10,14 @@ USER anaconda:anaconda
 
 ARG REPO_OWNER
 ARG REPO_NAME
+ARG BRANCH_NAME
 WORKDIR $HOME
 
 # install cython - requirement for ssm
 RUN pip install cython
 
 # Clone the workflow
-RUN git clone -b main https://github.com/${REPO_OWNER}/${REPO_NAME}.git
+RUN git clone -b ${BRANCH_NAME} https://github.com/${REPO_OWNER}/${REPO_NAME}.git
 
 # Install additional dependencies
 RUN cp ./${REPO_NAME}/apt_requirements.txt /tmp/

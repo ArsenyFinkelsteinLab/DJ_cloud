@@ -23,5 +23,5 @@ docker system prune -a -f --volumes
 
 #sleep 10 # test
 
-echo "----- Shutdown server -----"
-sudo shutdown now
+# echo "----- Shutdown server -----"
+# sudo shutdown now

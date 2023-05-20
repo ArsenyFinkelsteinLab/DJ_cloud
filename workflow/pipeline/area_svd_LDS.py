@@ -8,7 +8,6 @@ from math import *
 import autograd.numpy as np
 import autograd.numpy.random as npr
 from datajoint.logging import logger
-
 import ssm
 
 schema = dj.Schema('lee_meso_analysis')
@@ -51,6 +50,8 @@ class AreaSVDLDS(dj.Computed):
                 if temporal_components[0].size < 2000:
                     return
                 
+                logger.info("Latent dim = %d",latent_dim)
+
                 logger.info("Latent dim = %d",latent_dim)
 
                 lds = ssm.LDS(observed_dim, latent_dim, emissions="gaussian")

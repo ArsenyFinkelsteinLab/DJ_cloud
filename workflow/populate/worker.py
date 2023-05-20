@@ -58,7 +58,7 @@ standard_worker = DataJointWorker('standard_worker',
 
 ###### MESO LDS
 # meso_LDS.SVDLDS.key_source &= {'observed_dim': '80', 'latent_dim': '60'}
-# standard_worker(meso_LDS.SVDLDS)
+standard_worker(meso_LDS.SVDLDS)
 
 ###########
 # standard_worker(area_svd_LDS.AreaSVDLDS)
@@ -88,7 +88,7 @@ standard_worker = DataJointWorker('standard_worker',
 
 #### Shared variance computation
 #shared_variance_analysis.SVC.key_source &= {'subject_id': '464724', 'time_bin': '0'}
-standard_worker(shared_variance_analysis.SVC)
+# standard_worker(shared_variance_analysis.SVC)
 
 
 # example to add new workers  

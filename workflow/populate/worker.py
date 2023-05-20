@@ -58,11 +58,11 @@ standard_worker = DataJointWorker('standard_worker',
 
 ###### MESO LDS
 # meso_LDS.SVDLDS.key_source &= {'observed_dim': '80', 'latent_dim': '60'}
-# standard_worker(meso_LDS.SVDLDS)
+standard_worker(meso_LDS.SVDLDS)
 
 ###### Area LDS
 # area_svd_LDS.AreaSVDLDS.key_source &= {'observed_dim': '80', 'latent_dim': '60'}
-standard_worker(area_svd_LDS.AreaSVDLDS)
+# standard_worker(area_svd_LDS.AreaSVDLDS)
 
 ###### MESO SVD Partition
 #standard_worker(meso_svd_part.ROISVDPartition1)

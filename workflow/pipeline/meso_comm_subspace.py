@@ -108,10 +108,10 @@ class CommSubspace(dj.Computed):
     	# So far the code is only correct for threshold == 0
         threshold_for_event = 0 # [0, 1, 2]
 
-        max_lag = 5
-        nranks = 10
+        max_lag = 40
+        nranks = 30
         rel_temp = img.Mesoscope & key
-        time_bin_vector = [0, 1.5]
+        time_bin_vector = [0]
 
         flag_zscore = 1
         sigma = .1

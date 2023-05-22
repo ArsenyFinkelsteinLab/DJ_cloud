@@ -108,8 +108,8 @@ class CommSubspace(dj.Computed):
     	# So far the code is only correct for threshold == 0
         threshold_for_event = 0 # [0, 1, 2]
 
-        max_lag = 50
-        nranks = 30
+        max_lag = 5
+        nranks = 3
         rel_temp = img.Mesoscope & key
         time_bin_vector = [0, 1.5]
 
@@ -151,6 +151,9 @@ class CommSubspace(dj.Computed):
             ntimepoints = F_source_binned.shape[1]
             nneurons = min(nneurons,2000)
 
+            if nneurons == 0:
+                return
+
 
             F_target_binned = np.array([MakeBins(Fi.flatten(), time_bin * imaging_frame_rate) for Fi in F_target])
             nneurons2 = F_target_binned.shape[0]
@@ -161,22 +164,29 @@ class CommSubspace(dj.Computed):
 
             rank_vals = (np.floor(np.linspace(0, nneurons, nranks, endpoint=True))).astype(int)
 
+            rank_vals = (np.floor(np.linspace(0, nneurons, nranks, endpoint=True))).astype(int)
+            insert_key = key
+            insert_key.pop('brain_area')
+            insert_key['source_brain_area'] = source_brain_area                    
+            insert_key['target_brain_area'] = target_brain_area
+
             for i in range(nranks):
                 for j in range(max_lag):
                     rank = rank_vals[i]
                     lag = j
-                    F_s_lagged = F_source_binned[:, lag:]
-                    F_t_lagged = F_target_binned[:, -lag:]
+                    if lag > 0:
+                        F_s_lagged = F_source_binned[:, lag:]
+                        F_t_lagged = F_target_binned[:, :-lag]
+                    else:
+                        F_s_lagged = F_source_binned
+                        F_t_lagged = F_target_binned
                     mse, ss, B, V = reduced_reg(F_s_lagged.T,F_t_lagged.T,rank,sigma)
                     r2 = 1 - mse / ss
 
-                    insert_key = key
-                    insert_key.pop('brain_area')
-                    insert_key['source_brain_area'] = source_brain_area                    
-                    insert_key['target_brain_area'] = target_brain_area
-                    insert_key = {**insert_key, 'time_bin': time_bin, 'threshold_for_event': threshold_for_event,
+                    
+                    insert_key2 = {**insert_key, 'time_bin': time_bin, 'threshold_for_event': threshold_for_event,
                                     'rank': rank, 'lag': lag}
-                    self.insert1({**insert_key, 'r2': r2, 'regression_coeffs': B, 'reduced_basis': V}, allow_direct_insert=True)
+                    self.insert1({**insert_key2, 'r2': r2, 'regression_coeffs': B, 'reduced_basis': V}, allow_direct_insert=True)
 
 
             

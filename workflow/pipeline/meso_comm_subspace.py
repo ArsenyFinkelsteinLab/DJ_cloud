@@ -166,7 +166,7 @@ class CommSubspace(dj.Computed):
                     rank = rank_vals[i]
                     lag = j
                     F_s_lagged = F_source_binned[:, lag:]
-                    F_t_lagged = F_target_binned[:, -lag:]
+                    F_t_lagged = F_target_binned[:, :-lag]
                     mse, ss, B, V = reduced_reg(F_s_lagged.T,F_t_lagged.T,rank,sigma)
                     r2 = 1 - mse / ss
 

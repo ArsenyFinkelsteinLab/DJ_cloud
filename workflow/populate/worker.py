@@ -63,7 +63,7 @@ standard_worker(meso_comm_subspace.CommSubspace)
 
 ###### MESO LDS
 # meso_LDS.SVDLDS.key_source &= {'observed_dim': '80', 'latent_dim': '60'}
-# standard_worker(meso_LDS.SVDLDS)
+standard_worker(meso_LDS.SVDLDS)
 
 ###### Area LDS
 # area_svd_LDS.AreaSVDLDS.key_source &= {'observed_dim': '80', 'latent_dim': '60'}

@@ -61,11 +61,12 @@ def reduced_reg(X,Y,rank,sigma):
     X = X - mX
     Y = Y - mY
 
-    CXX = np.linalg.pinv(np.dot(X.T,X) + sigma * sparse.eye(np.size(X,1)))
-    B_OLS = np.dot(CXX, np.dot(X.T,Y))
+    CXX = np.dot(X.T,X) + sigma * sparse.eye(np.size(X,1))
+    CXY = np.dot(X.T,Y)
+    B_OLS = np.dot(np.linalg.inv(CXX), CXY)
     
     Y_OLS = np.dot(X,B_OLS)
-    _U, _S, V = np.linalg.svd(Y_OLS)
+    _U, _S, V = np.linalg.svd(Y_OLS, full_matrices=False)
     
     B = B_OLS
     Vr = 0
@@ -79,7 +80,7 @@ def reduced_reg(X,Y,rank,sigma):
     Y = Y.flatten()
     ss = np.mean(np.power(Y,2))
 
-    return ss, mse, B, Vr
+    return mse, ss, B, Vr
 
 
 
@@ -96,7 +97,6 @@ class CommSubspace(dj.Computed):
     rank          : double
     ---
     r2            : double
-    regression_coeffs             : blob
     reduced_basis             : blob
     """
 
@@ -108,13 +108,13 @@ class CommSubspace(dj.Computed):
     	# So far the code is only correct for threshold == 0
         threshold_for_event = 0 # [0, 1, 2]
 
-        max_lag = 50
-        nranks = 30
+        max_lag = 30
+        nranks = 40
         rel_temp = img.Mesoscope & key
-        time_bin_vector = [0, 1.5]
+        time_bin_vector = [0]
 
         flag_zscore = 1
-        sigma = .1
+        sigma = 1
 
         rel_FOVEpoch = img.FOVEpoch & key
         rel_FOV = img.FOV & key
@@ -186,7 +186,7 @@ class CommSubspace(dj.Computed):
                     
                     insert_key2 = {**insert_key, 'time_bin': time_bin, 'threshold_for_event': threshold_for_event,
                                     'rank': rank, 'lag': lag}
-                    self.insert1({**insert_key2, 'r2': r2, 'regression_coeffs': B, 'reduced_basis': V}, allow_direct_insert=True)
+                    self.insert1({**insert_key2, 'r2': r2, 'reduced_basis': V}, allow_direct_insert=True)
 
 
             

@@ -170,7 +170,7 @@ class CommSubspace4(dj.Computed):
             insert_key['target_brain_area'] = target_brain_area
 
             for i in range(nranks):
-                for j in range(0, 3, max_lag):
+                for j in range(0, max_lag, 3):
                     rank = rank_vals[i]
                     lag = j
                     if lag > 0:

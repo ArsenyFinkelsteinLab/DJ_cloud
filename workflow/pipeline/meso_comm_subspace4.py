@@ -105,8 +105,8 @@ class CommSubspace4(dj.Computed):
     	# So far the code is only correct for threshold == 0
         threshold_for_event = 0 # [0, 1, 2]
 
-        max_lag = 5
-        nranks = 5
+        max_lag = 30
+        nranks = 40
         r2_all = np.empty((nranks, max_lag))
 
         rel_temp = img.Mesoscope & key
@@ -170,7 +170,7 @@ class CommSubspace4(dj.Computed):
             insert_key['target_brain_area'] = target_brain_area
 
             for i in range(nranks):
-                for j in range(max_lag):
+                for j in range(0, 3, max_lag):
                     rank = rank_vals[i]
                     lag = j
                     if lag > 0:

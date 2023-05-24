@@ -14,6 +14,7 @@ from workflow.pipeline import meso_svd_area2
 from workflow.pipeline import meso_area_shuffle
 from workflow.pipeline import area_svd_LDS
 from workflow.pipeline import meso_comm_subspace
+from workflow.pipeline import meso_comm_subspace4
 
 # from workflow.pipeline import analysis_new   # import another schema in the future
 

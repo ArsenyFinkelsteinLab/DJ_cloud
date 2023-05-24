@@ -8,17 +8,6 @@ import math
 from math import *
 import os
 
-
-dj.config['database.host'] = 'datajoint.mesoscale-activity-map.org'
-dj.config['database.user'] = 'lee'
-dj.config['database.password'] = 'verify'
-dj.config['query_cache'] = os.path.expanduser('..\plotting\dj_query_cache')
-conn = dj.conn()
-# conn.purge_query_cache()
-
-conn.set_query_cache(query_cache=None)
-
-
 schema = dj.Schema('lee_meso_analysis')
 
 exp2 = dj.VirtualModule('exp2', 'arseny_s1alm_experiment2')

@@ -86,7 +86,7 @@ def reduced_reg(X,Y,rank,sigma):
 
 
 @schema
-class CommSubspace(dj.Computed):
+class CommSubspace3(dj.Computed):
     definition = """
     -> exp2.SessionEpoch
     -> meso.SourceBrainArea
@@ -97,7 +97,6 @@ class CommSubspace(dj.Computed):
     rank          : double
     ---
     r2            : double
-    reduced_basis             : blob
     """
 
     @property
@@ -186,7 +185,7 @@ class CommSubspace(dj.Computed):
                     
                     insert_key2 = {**insert_key, 'time_bin': time_bin, 'threshold_for_event': threshold_for_event,
                                     'rank': rank, 'lag': lag}
-                    self.insert1({**insert_key2, 'r2': r2, 'reduced_basis': V}, allow_direct_insert=True)
+                    self.insert1({**insert_key2, 'r2': r2}, allow_direct_insert=True)
 
 
             

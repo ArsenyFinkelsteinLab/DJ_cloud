@@ -42,7 +42,7 @@ standard_worker = DataJointWorker('standard_worker',
 
 
 ##### Communication Subspace
-standard_worker(meso_comm_subspace.CommSubspace3)
+standard_worker(meso_comm_subspace4.CommSubspace4)
 
 
 

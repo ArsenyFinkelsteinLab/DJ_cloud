@@ -105,8 +105,8 @@ class CommSubspace4(dj.Computed):
     	# So far the code is only correct for threshold == 0
         threshold_for_event = 0 # [0, 1, 2]
 
-        max_lag = 40
-        nranks = 40
+        max_lag = 5
+        nranks = 5
         r2_all = np.empty((nranks, max_lag))
 
         rel_temp = img.Mesoscope & key

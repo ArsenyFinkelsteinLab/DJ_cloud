@@ -170,11 +170,9 @@ class CommSubspace4(dj.Computed):
             insert_key['target_brain_area'] = target_brain_area
 
             for i in range(nranks):
-                print(i)
                 for j in range(max_lag):
                     rank = rank_vals[i]
                     lag = j
-                    print(lag)
                     if lag > 0:
                         F_s_lagged = F_source_binned[:, lag:]
                         F_t_lagged = F_target_binned[:, :-lag]

@@ -8,6 +8,17 @@ import math
 from math import *
 import os
 
+
+dj.config['database.host'] = 'datajoint.mesoscale-activity-map.org'
+dj.config['database.user'] = 'lee'
+dj.config['database.password'] = 'verify'
+dj.config['query_cache'] = os.path.expanduser('..\plotting\dj_query_cache')
+conn = dj.conn()
+# conn.purge_query_cache()
+
+conn.set_query_cache(query_cache=None)
+
+
 schema = dj.Schema('lee_meso_analysis')
 
 exp2 = dj.VirtualModule('exp2', 'arseny_s1alm_experiment2')
@@ -105,9 +116,11 @@ class CommSubspace4(dj.Computed):
     	# So far the code is only correct for threshold == 0
         threshold_for_event = 0 # [0, 1, 2]
 
-        max_lag = 40
-        nranks = 30
-        r2_all = np.empty((nranks, max_lag))
+        max_lag = 30
+        step = 3
+        nlags = max_lag/step
+        nranks = 40
+        r2_all = np.empty((nranks, nlags + 1))
 
         rel_temp = img.Mesoscope & key
         time_bin_vector = [0]
@@ -170,9 +183,11 @@ class CommSubspace4(dj.Computed):
             insert_key['target_brain_area'] = target_brain_area
 
             for i in range(nranks):
-                for j in range(0, max_lag, 3):
+                print(i)
+                for j in range(0,nlags):
                     rank = rank_vals[i]
                     lag = j
+                    print(lag)
                     if lag > 0:
                         F_s_lagged = F_source_binned[:, lag:]
                         F_t_lagged = F_target_binned[:, :-lag]
@@ -182,7 +197,7 @@ class CommSubspace4(dj.Computed):
                     mse, ss, B, V = reduced_reg(F_s_lagged.T,F_t_lagged.T,rank,sigma)
                     r2_all[i,j] = 1 - mse / ss
 
-                    
+            r2_all[:,nlags] = rank_vals.T
             insert_key2 = {**insert_key, 'time_bin': time_bin, 'threshold_for_event': threshold_for_event}
             self.insert1({**insert_key2, 'r2': r2_all}, allow_direct_insert=True)
 

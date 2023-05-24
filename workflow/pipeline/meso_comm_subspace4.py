@@ -8,17 +8,6 @@ import math
 from math import *
 import os
 
-
-dj.config['database.host'] = 'datajoint.mesoscale-activity-map.org'
-dj.config['database.user'] = 'lee'
-dj.config['database.password'] = 'verify'
-dj.config['query_cache'] = os.path.expanduser('..\plotting\dj_query_cache')
-conn = dj.conn()
-# conn.purge_query_cache()
-
-conn.set_query_cache(query_cache=None)
-
-
 schema = dj.Schema('lee_meso_analysis')
 
 exp2 = dj.VirtualModule('exp2', 'arseny_s1alm_experiment2')
@@ -110,7 +99,7 @@ class CommSubspace4(dj.Computed):
 
     @property
     def key_source(self):
-        return (exp2.SessionEpoch*meso.SourceBrainArea*meso.TargetBrainArea & 'session_epoch_type = "spont_only"' & img.ROIdeltaF & img.ROIBrainArea & stimanal.MiceIncluded) - exp2.SessionEpochSomatotopy
+        return (exp2.SessionEpoch*meso.SourceBrainArea*meso.TargetBrainArea & img.ROIdeltaF & img.ROIBrainArea & stimanal.MiceIncluded) - exp2.SessionEpochSomatotopy
 
     def make(self, key):
     	# So far the code is only correct for threshold == 0
@@ -118,7 +107,7 @@ class CommSubspace4(dj.Computed):
 
         max_lag = 30
         step = 3
-        nlags = max_lag/step
+        nlags = int(max_lag/step)
         nranks = 40
         r2_all = np.empty((nranks, nlags + 1))
 

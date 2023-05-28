@@ -167,7 +167,6 @@ class CommSubspace4(dj.Computed):
 
             rank_vals = (np.floor(np.linspace(0, nneurons, int(nranks/3), endpoint=True))).astype(int)
 
-            rank_vals = (np.floor(np.linspace(0, nneurons, nranks, endpoint=True))).astype(int)
             insert_key = key
             insert_key.pop('brain_area')
             insert_key['source_brain_area'] = source_brain_area                    

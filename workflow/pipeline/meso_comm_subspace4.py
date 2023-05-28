@@ -61,9 +61,9 @@ def reduced_reg(X,Y,rank,sigma):
     X = X - mX
     Y = Y - mY
 
-    CXX = np.dot(X.T,X) + sigma * sparse.eye(np.size(X,1))
+    CXX = np.dot(X.T,X) + sigma * np.identity(np.size(X,1))
     CXY = np.dot(X.T,Y)
-    B_OLS = np.dot(np.linalg.inv(CXX), CXY)
+    B_OLS = np.dot(np.linalg.pinv(CXX), CXY)
     
     Y_OLS = np.dot(X,B_OLS)
     _U, _S, V = np.linalg.svd(Y_OLS, full_matrices=False)
@@ -71,6 +71,7 @@ def reduced_reg(X,Y,rank,sigma):
     B = B_OLS
     Vr = 0
     if rank > 0:
+        V = V.T
         Vr = V[:,:rank]
         B = np.dot(B, np.dot(Vr,Vr.T))
 
@@ -81,7 +82,6 @@ def reduced_reg(X,Y,rank,sigma):
     ss = np.mean(np.power(Y,2))
 
     return mse, ss, B, Vr
-
 
 
 
@@ -100,12 +100,12 @@ class CommSubspace4(dj.Computed):
     @property
     def key_source(self):
         return (exp2.SessionEpoch*meso.SourceBrainArea*meso.TargetBrainArea & img.ROIdeltaF & img.ROIBrainArea & stimanal.MiceIncluded) - exp2.SessionEpochSomatotopy
-
+    
     def make(self, key):
     	# So far the code is only correct for threshold == 0
         threshold_for_event = 0 # [0, 1, 2]
 
-        max_lag = 30
+        max_lag = 39
         step = 3
         nlags = int(max_lag/step)
         nranks = 40
@@ -136,12 +136,10 @@ class CommSubspace4(dj.Computed):
         source_key = key
         source_key.pop('source_brain_area')
         source_key.pop('target_brain_area')
-        target_key = source_key
         source_key['brain_area'] = source_brain_area
-        target_key['brain_area'] = target_brain_area
-
-
         F_source = FetchChunked(rel_data_area & source_key, rel_data_tot & source_key, 'roi_number', 'dff_trace', 500)
+        target_key = source_key
+        target_key['brain_area'] = target_brain_area
         F_target = FetchChunked(rel_data_area & target_key, rel_data_tot & target_key, 'roi_number', 'dff_trace', 500)
 
 
@@ -149,6 +147,10 @@ class CommSubspace4(dj.Computed):
 
             F_source_binned = np.array([MakeBins(Fi.flatten(), time_bin * imaging_frame_rate) for Fi in F_source])
             nneurons = F_source_binned.shape[0]
+
+            if nneurons == 0:
+                return
+        
             ntimepoints = F_source_binned.shape[1]
             nneurons = min(nneurons,2000)
 
@@ -172,11 +174,9 @@ class CommSubspace4(dj.Computed):
             insert_key['target_brain_area'] = target_brain_area
 
             for i in range(nranks):
-                print(i)
-                for j in range(0,nlags):
+                for j in range(nlags):
                     rank = rank_vals[i]
-                    lag = j
-                    print(lag)
+                    lag = 3*j
                     if lag > 0:
                         F_s_lagged = F_source_binned[:, lag:]
                         F_t_lagged = F_target_binned[:, :-lag]
@@ -187,8 +187,10 @@ class CommSubspace4(dj.Computed):
                     r2_all[i,j] = 1 - mse / ss
 
             r2_all[:,nlags] = rank_vals.T
+
             insert_key2 = {**insert_key, 'time_bin': time_bin, 'threshold_for_event': threshold_for_event}
             self.insert1({**insert_key2, 'r2': r2_all}, allow_direct_insert=True)
+
 
 
             

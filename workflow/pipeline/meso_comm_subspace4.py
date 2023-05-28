@@ -108,6 +108,7 @@ class CommSubspace4(dj.Computed):
         threshold_for_event = 0 # [0, 1, 2]
 
         t_start = time.time()
+        logger.info("end time = %d",t_start)
 
         max_lag = 39
         step = 3
@@ -169,7 +170,7 @@ class CommSubspace4(dj.Computed):
             F_source_binned = F_source_binned[:nneurons,:]
             F_target_binned = F_target_binned[:nneurons,:]
 
-            rank_vals = (np.floor(np.linspace(0, nneurons, int(nranks/3), endpoint=True))).astype(int)
+            rank_vals = (np.floor(np.linspace(0, int(nneurons/3), nranks, endpoint=True))).astype(int)
 
             insert_key = key
             insert_key.pop('brain_area')
@@ -195,9 +196,6 @@ class CommSubspace4(dj.Computed):
             self.insert1({**insert_key2, 'r2': r2_all}, allow_direct_insert=True)
             
             t_end = time.time()
+            logger.info("end time = %d",t_end)
             logger.info("compute time was = %d",t_end - t_start)
 
-
-
-
-            

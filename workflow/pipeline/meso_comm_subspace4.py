@@ -99,7 +99,7 @@ class CommSubspace4(dj.Computed):
 
     @property
     def key_source(self):
-        return (exp2.SessionEpoch*meso.SourceBrainArea*meso.TargetBrainArea & img.ROIdeltaF & img.ROIBrainArea & stimanal.MiceIncluded) - exp2.SessionEpochSomatotopy
+        return (exp2.SessionEpoch*meso.SourceBrainArea*meso.TargetBrainArea & img.ROIdeltaF & img.ROIBrainArea & stimanal.MiceIncluded) - exp2.SessionEpochSomatotopy & 'session_epoch_type = "spont_only"'
     
     def make(self, key):
     	# So far the code is only correct for threshold == 0
@@ -165,7 +165,7 @@ class CommSubspace4(dj.Computed):
             F_source_binned = F_source_binned[:nneurons,:]
             F_target_binned = F_target_binned[:nneurons,:]
 
-            rank_vals = (np.floor(np.linspace(0, nneurons, nranks, endpoint=True))).astype(int)
+            rank_vals = (np.floor(np.linspace(0, nneurons, int(nranks/3), endpoint=True))).astype(int)
 
             rank_vals = (np.floor(np.linspace(0, nneurons, nranks, endpoint=True))).astype(int)
             insert_key = key

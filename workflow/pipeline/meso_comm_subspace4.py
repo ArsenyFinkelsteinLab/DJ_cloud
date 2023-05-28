@@ -7,6 +7,8 @@ from scipy import sparse
 import math
 from math import *
 import os
+import time
+from datajoint.logging import logger
 
 schema = dj.Schema('lee_meso_analysis')
 
@@ -99,11 +101,13 @@ class CommSubspace4(dj.Computed):
 
     @property
     def key_source(self):
-        return (exp2.SessionEpoch*meso.SourceBrainArea*meso.TargetBrainArea & img.ROIdeltaF & img.ROIBrainArea & stimanal.MiceIncluded) - exp2.SessionEpochSomatotopy & 'session_epoch_type = "spont_only"'
+        return (exp2.SessionEpoch*meso.SourceBrainArea*meso.TargetBrainArea & img.ROIdeltaF & img.ROIBrainArea & stimanal.MiceIncluded) - exp2.SessionEpochSomatotopy & 'session_epoch_type = "spont_only"' & 'source_brain_area = "RSPagl"' & 'target_brain_area = "RSPd"'
     
     def make(self, key):
     	# So far the code is only correct for threshold == 0
         threshold_for_event = 0 # [0, 1, 2]
+
+        t_start = time.time()
 
         max_lag = 39
         step = 3
@@ -189,6 +193,10 @@ class CommSubspace4(dj.Computed):
 
             insert_key2 = {**insert_key, 'time_bin': time_bin, 'threshold_for_event': threshold_for_event}
             self.insert1({**insert_key2, 'r2': r2_all}, allow_direct_insert=True)
+            
+            t_end = time.time()
+            logger.info("compute time was = %d",t_end - t_start)
+
 
 
 

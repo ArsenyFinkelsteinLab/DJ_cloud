@@ -165,9 +165,8 @@ class CommSubspace4(dj.Computed):
             F_source_binned = F_source_binned[:nneurons,:]
             F_target_binned = F_target_binned[:nneurons,:]
 
-            rank_vals = (np.floor(np.linspace(0, nneurons, nranks, endpoint=True))).astype(int)
+            rank_vals = (np.floor(np.linspace(0, int(nneurons/3), nranks, endpoint=True))).astype(int)
 
-            rank_vals = (np.floor(np.linspace(0, nneurons, nranks, endpoint=True))).astype(int)
             insert_key = key
             insert_key.pop('brain_area')
             insert_key['source_brain_area'] = source_brain_area                    

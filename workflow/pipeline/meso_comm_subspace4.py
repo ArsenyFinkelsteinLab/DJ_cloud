@@ -108,7 +108,7 @@ class CommSubspace4(dj.Computed):
         threshold_for_event = 0 # [0, 1, 2]
 
         t_start = time.time()
-        logger.info("end time = %d",t_start)
+        logger.info("start time = %d",t_start)
 
         max_lag = 39
         step = 3

@@ -146,21 +146,16 @@ class CommSubspace4(dj.Computed):
         for time_bin in time_bin_vector:
 
             F_source_binned = np.array([MakeBins(Fi.flatten(), time_bin * imaging_frame_rate) for Fi in F_source])
+            F_target_binned = np.array([MakeBins(Fi.flatten(), time_bin * imaging_frame_rate) for Fi in F_target])
             nneurons = F_source_binned.shape[0]
-
+            nneurons2 = F_target_binned.shape[0]
+            nneurons = min(nneurons,nneurons2)
+            
             if nneurons == 0:
                 return
         
             ntimepoints = F_source_binned.shape[1]
             nneurons = min(nneurons,2000)
-
-            if nneurons == 0:
-                return
-
-
-            F_target_binned = np.array([MakeBins(Fi.flatten(), time_bin * imaging_frame_rate) for Fi in F_target])
-            nneurons2 = F_target_binned.shape[0]
-            nneurons = min(nneurons,nneurons2)
 
             F_source_binned = F_source_binned[:nneurons,:]
             F_target_binned = F_target_binned[:nneurons,:]

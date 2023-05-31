@@ -7,8 +7,6 @@ from scipy import sparse
 import math
 from math import *
 import os
-import time
-from datajoint.logging import logger
 
 schema = dj.Schema('lee_meso_analysis')
 
@@ -101,14 +99,11 @@ class CommSubspace4(dj.Computed):
 
     @property
     def key_source(self):
-        return (exp2.SessionEpoch*meso.SourceBrainArea*meso.TargetBrainArea & img.ROIdeltaF & img.ROIBrainArea & stimanal.MiceIncluded) - exp2.SessionEpochSomatotopy# & 'source_brain_area = "MOp"' & 'target_brain_area = "MOs"'
+        return (exp2.SessionEpoch*meso.SourceBrainArea*meso.TargetBrainArea & img.ROIdeltaF & img.ROIBrainArea & stimanal.MiceIncluded) - exp2.SessionEpochSomatotopy
     
     def make(self, key):
     	# So far the code is only correct for threshold == 0
         threshold_for_event = 0 # [0, 1, 2]
-
-        t_start = time.time()
-        logger.info("start time = %d",t_start)
 
         max_lag = 39
         step = 3
@@ -151,21 +146,16 @@ class CommSubspace4(dj.Computed):
         for time_bin in time_bin_vector:
 
             F_source_binned = np.array([MakeBins(Fi.flatten(), time_bin * imaging_frame_rate) for Fi in F_source])
+            F_target_binned = np.array([MakeBins(Fi.flatten(), time_bin * imaging_frame_rate) for Fi in F_target])
             nneurons = F_source_binned.shape[0]
-
+            nneurons2 = F_target_binned.shape[0]
+            nneurons = min(nneurons,nneurons2)
+            
             if nneurons == 0:
                 return
         
             ntimepoints = F_source_binned.shape[1]
             nneurons = min(nneurons,2000)
-
-            if nneurons == 0:
-                return
-
-
-            F_target_binned = np.array([MakeBins(Fi.flatten(), time_bin * imaging_frame_rate) for Fi in F_target])
-            nneurons2 = F_target_binned.shape[0]
-            nneurons = min(nneurons,nneurons2)
 
             F_source_binned = F_source_binned[:nneurons,:]
             F_target_binned = F_target_binned[:nneurons,:]
@@ -194,8 +184,3 @@ class CommSubspace4(dj.Computed):
 
             insert_key2 = {**insert_key, 'time_bin': time_bin, 'threshold_for_event': threshold_for_event}
             self.insert1({**insert_key2, 'r2': r2_all}, allow_direct_insert=True)
-            
-            t_end = time.time()
-            logger.info("end time = %d",t_end)
-            logger.info("compute time was = %d",t_end - t_start)
-

@@ -145,6 +145,11 @@ class CommSubspace4(dj.Computed):
 
         for time_bin in time_bin_vector:
 
+            insert_key = key
+            insert_key.pop('brain_area')
+            insert_key['source_brain_area'] = source_brain_area                    
+            insert_key['target_brain_area'] = target_brain_area
+            
             F_source_binned = np.array([MakeBins(Fi.flatten(), time_bin * imaging_frame_rate) for Fi in F_source])
             F_target_binned = np.array([MakeBins(Fi.flatten(), time_bin * imaging_frame_rate) for Fi in F_target])
             nneurons = F_source_binned.shape[0]
@@ -152,6 +157,9 @@ class CommSubspace4(dj.Computed):
             nneurons = min(nneurons,nneurons2)
             
             if nneurons == 0:
+                r2_all = 0
+                insert_key2 = {**insert_key, 'time_bin': time_bin, 'threshold_for_event': threshold_for_event}
+                self.insert1({**insert_key2, 'r2': r2_all}, allow_direct_insert=True)
                 return
         
             ntimepoints = F_source_binned.shape[1]
@@ -161,11 +169,6 @@ class CommSubspace4(dj.Computed):
             F_target_binned = F_target_binned[:nneurons,:]
 
             rank_vals = (np.floor(np.linspace(0, int(nneurons/3), nranks, endpoint=True))).astype(int)
-
-            insert_key = key
-            insert_key.pop('brain_area')
-            insert_key['source_brain_area'] = source_brain_area                    
-            insert_key['target_brain_area'] = target_brain_area
 
             for i in range(nranks):
                 for j in range(nlags):

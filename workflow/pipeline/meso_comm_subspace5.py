@@ -105,7 +105,7 @@ class CommSubspace5(dj.Computed):
     	# So far the code is only correct for threshold == 0
         threshold_for_event = 0 # [0, 1, 2]
 
-        nranks = 30
+        nranks = 40
         r2_all = np.empty((nranks, 2))
         r2_all[:] = np.nan
 
@@ -159,7 +159,7 @@ class CommSubspace5(dj.Computed):
                 flag = 1
             else: 
                 ntimepoints = F_source_binned.shape[1]
-                if ntimepoints < 1500:
+                if ntimepoints < 2500:
                     flag = 1
             
             if flag:
@@ -169,7 +169,7 @@ class CommSubspace5(dj.Computed):
         
             
             nneurons = 500
-            ntimepoints = 1500
+            ntimepoints = 2500
             F_source_binned = F_source_binned[:nneurons,:ntimepoints]
             F_target_binned = F_target_binned[:nneurons,:ntimepoints]
 

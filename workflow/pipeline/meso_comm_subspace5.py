@@ -157,10 +157,10 @@ class CommSubspace5(dj.Computed):
             
             if nneurons < 500:
                 flag = 1
-                
-            ntimepoints = F_source_binned.shape[1]
-            if ntimepoints < 1500:
-                flag = 1
+            else: 
+                ntimepoints = F_source_binned.shape[1]
+                if ntimepoints < 1500:
+                    flag = 1
             
             if flag:
                 insert_key2 = {**insert_key, 'time_bin': time_bin, 'threshold_for_event': threshold_for_event}

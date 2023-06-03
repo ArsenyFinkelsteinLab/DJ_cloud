@@ -111,7 +111,7 @@ class CommSubspaceRemoved(dj.Computed):
     	# So far the code is only correct for threshold == 0
         threshold_for_event = 0 # [0, 1, 2]
 
-        nranks = 30
+        nranks = 40
         comps = [0, 1, 2, 5, 20]
         ncomps = len(comps)
         rel_temp = img.Mesoscope & key
@@ -149,12 +149,11 @@ class CommSubspaceRemoved(dj.Computed):
         source_key['brain_area'] = source_brain_area
         source_roi_list = (rel_roi & source_key).fetch('roi_number')
         source_roi_list = [x - 1 for x in source_roi_list]
-        # F_source = FetchChunked(rel_data_area & source_key, rel_data_tot & source_key, 'roi_number', 'dff_trace', 500)
         target_key = source_key
         target_key['brain_area'] = target_brain_area
         target_roi_list = (rel_roi & target_key).fetch('roi_number')
         target_roi_list = [x - 1 for x in target_roi_list]
-        # F_target = FetchChunked(rel_data_area & target_key, rel_data_tot & target_key, 'roi_number', 'dff_trace', 500)
+
         insert_key = key
         insert_key.pop('brain_area')
         insert_key['source_brain_area'] = source_brain_area                    
@@ -170,8 +169,7 @@ class CommSubspaceRemoved(dj.Computed):
             Sr = S[num_comp_2remove:num_components, num_comp_2remove:num_components]
 
             F_reconstruct = np.dot(Ur, np.dot(Sr,Vr))
-
-            
+         
             F_new = np.empty((max(roi_list)+1, F_reconstruct.shape[1]))
             F_new[roi_list,:] = F_reconstruct
             F_reconstruct = F_new

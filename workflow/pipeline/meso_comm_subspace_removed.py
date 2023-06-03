@@ -111,7 +111,7 @@ class CommSubspaceRemoved(dj.Computed):
     	# So far the code is only correct for threshold == 0
         threshold_for_event = 0 # [0, 1, 2]
 
-        nranks = 5
+        nranks = 40
         comps = [0, 1, 2, 5, 10, 20, 50]
         ncomps = len(comps)
         rel_temp = img.Mesoscope & key

@@ -159,7 +159,7 @@ class CommSubspaceRemoved(dj.Computed):
         insert_key.pop('brain_area')
         insert_key['source_brain_area'] = source_brain_area                    
         insert_key['target_brain_area'] = target_brain_area
-        num_components = 200
+        num_components = 500
 
         for num_comp_2remove in comps:
             r2_all = np.empty((nranks, 2))

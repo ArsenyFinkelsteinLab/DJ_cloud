@@ -83,7 +83,6 @@ def reduced_reg(X,Y,rank,sigma):
     return mse, ss, B, Vr
 
 
-
 @schema
 class CommSubspaceRemoved(dj.Computed):
     definition = """
@@ -102,14 +101,18 @@ class CommSubspaceRemoved(dj.Computed):
         return (exp2.SessionEpoch*meso.SourceBrainArea*meso.TargetBrainArea & img.ROIdeltaF & img.ROIBrainArea & stimanal.MiceIncluded) - exp2.SessionEpochSomatotopy
     
     def make(self, key):
+
+        target_brain_area = key['target_brain_area']
+        source_brain_area = key['source_brain_area']
+
+        if target_brain_area == source_brain_area:
+            return
+        
     	# So far the code is only correct for threshold == 0
         threshold_for_event = 0 # [0, 1, 2]
 
         nranks = 5
-        r2_all = np.empty((nranks, 2))
-        r2_all[:] = np.nan
-
-        comps = [0, 1, 5, 10, 20]
+        comps = [0, 1, 2, 5, 10, 20, 50]
         ncomps = len(comps)
         rel_temp = img.Mesoscope & key
         time_bin_vector = [0]
@@ -124,16 +127,16 @@ class CommSubspaceRemoved(dj.Computed):
         rel_data3 = meso.SVDTemporalComponents  & img.Mesoscope
 
         rel_roi = img.ROI*img.ROIBrainArea & (img.ROIGood - img.ROIBad)
-
-        target_brain_area = key['target_brain_area']
-        source_brain_area = key['source_brain_area']
-
-        if target_brain_area == source_brain_area:
-            return
+        key.pop('source_brain_area')
+        key.pop('target_brain_area')
+        source_key = key
+        roi_list = (rel_roi & key).fetch('roi_number')
+        roi_list = [x - 1 for x in roi_list]
 
         U = (rel_data1 & key).fetch('roi_components')
         U = np.vstack(U)
         S = (rel_data2 & key).fetch('singular_values')
+        S = np.diag(S[0])
         V = (rel_data3 & key).fetch('temporal_component')
         V = np.vstack(V)
 
@@ -143,32 +146,35 @@ class CommSubspaceRemoved(dj.Computed):
         else:
             imaging_frame_rate = rel_FOV.fetch1('imaging_frame_rate')
 
-        source_key = key
-        source_key.pop('source_brain_area')
-        source_key.pop('target_brain_area')
         source_key['brain_area'] = source_brain_area
         source_roi_list = (rel_roi & source_key).fetch('roi_number')
+        source_roi_list = [x - 1 for x in source_roi_list]
         # F_source = FetchChunked(rel_data_area & source_key, rel_data_tot & source_key, 'roi_number', 'dff_trace', 500)
         target_key = source_key
         target_key['brain_area'] = target_brain_area
         target_roi_list = (rel_roi & target_key).fetch('roi_number')
+        target_roi_list = [x - 1 for x in target_roi_list]
         # F_target = FetchChunked(rel_data_area & target_key, rel_data_tot & target_key, 'roi_number', 'dff_trace', 500)
-
+        insert_key = key
+        insert_key.pop('brain_area')
+        insert_key['source_brain_area'] = source_brain_area                    
+        insert_key['target_brain_area'] = target_brain_area
         num_components = 200
 
         for num_comp_2remove in comps:
+            r2_all = np.empty((nranks, 2))
+            r2_all[:] = np.nan
 
-            U = U[:, num_comp_2remove:num_components]
-            V = V[num_comp_2remove:num_components, :]
-            S = np.diag(S[0])
-            S = S[num_comp_2remove:num_components, num_comp_2remove:num_components]
+            Ur = U[:, num_comp_2remove:num_components]
+            Vr = V[num_comp_2remove:num_components, :]
+            Sr = S[num_comp_2remove:num_components, num_comp_2remove:num_components]
 
-            F_reconstruct = np.dot(U, np.dot(S,V))
+            F_reconstruct = np.dot(Ur, np.dot(Sr,Vr))
 
-            # roi_list = (rel_roi & key).fetch('roi_number')
-            # F_new = np.nan(roi_list[-1], F_reconstruct.size()[1])
-            # F_new[roi_list,:] = F_reconstruct
-            # F_reconstruct = F_new
+            
+            F_new = np.empty((max(roi_list)+1, F_reconstruct.shape[1]))
+            F_new[roi_list,:] = F_reconstruct
+            F_reconstruct = F_new
 
             F_source = F_reconstruct[source_roi_list, :]
             F_target = F_reconstruct[target_roi_list, :]
@@ -176,10 +182,6 @@ class CommSubspaceRemoved(dj.Computed):
             for time_bin in time_bin_vector:
 
                 flag = 0
-                insert_key = key
-                insert_key.pop('brain_area')
-                insert_key['source_brain_area'] = source_brain_area                    
-                insert_key['target_brain_area'] = target_brain_area
                 
                 F_source_binned = np.array([MakeBins(Fi.flatten(), time_bin * imaging_frame_rate) for Fi in F_source])
                 F_target_binned = np.array([MakeBins(Fi.flatten(), time_bin * imaging_frame_rate) for Fi in F_target])

@@ -197,7 +197,7 @@ class CommSubspaceRemoved(dj.Computed):
                         flag = 1
                 
                 if flag:
-                    insert_key2 = {**insert_key, 'time_bin': time_bin, 'threshold_for_event': threshold_for_event}
+                    insert_key2 = {**insert_key, 'time_bin': time_bin, 'threshold_for_event': threshold_for_event, 'num_comps_removed': num_comp_2remove}
                     self.insert1({**insert_key2, 'r2': r2_all}, allow_direct_insert=True)
                     return
             

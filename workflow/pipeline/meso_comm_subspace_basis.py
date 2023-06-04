@@ -107,6 +107,7 @@ class CommSubspaceBasis(dj.Computed):
 
         nranks = 10
         r2_all = np.empty((nranks, 2))
+        V_all = np.empty((500, 111))
         r2_all[:] = np.nan
 
         rel_temp = img.Mesoscope & key

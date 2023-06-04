@@ -17,6 +17,7 @@ from workflow.pipeline import meso_comm_subspace
 from workflow.pipeline import meso_comm_subspace4
 from workflow.pipeline import meso_comm_subspace5
 from workflow.pipeline import meso_comm_subspace_removed
+from workflow.pipeline import meso_comm_subspace_basis
 
 # from workflow.pipeline import analysis_new   # import another schema in the future
 
@@ -45,7 +46,7 @@ standard_worker = DataJointWorker('standard_worker',
 
 
 ##### Communication Subspace
-standard_worker(meso_comm_subspace_removed.CommSubspaceRemoved)
+standard_worker(meso_comm_subspace_basis.CommSubspaceBasis)
 
 
 

@@ -129,3 +129,5 @@ docker/standard_worker/.env
 
 # Mac
 .DS_Store
+
+infra_helper/.env

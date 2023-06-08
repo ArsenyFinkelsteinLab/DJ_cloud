@@ -182,7 +182,7 @@ class CommSubspaceBasis(dj.Computed):
                 mse, ss, B, V = reduced_reg(F_source_binned.T,F_target_binned.T,rank,sigma)
                 r2_all[i,0] = 1 - mse / ss
                 if i == 2:
-                    V_all = V
+                    V_all = np.dot(B, V)
 
             r2_all[:,1] = rank_vals.T
 

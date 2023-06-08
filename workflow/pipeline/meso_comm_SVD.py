@@ -104,21 +104,20 @@ class CommSubspaceSVD(dj.Computed):
     	# So far the code is only correct for threshold == 0
         threshold_for_event = 0 # [0, 1, 2]
 
-        nranks = 30
-        r2_all = np.empty((nranks, 2))
+        ncomps = 40
+        max_comp = 200
+        r2_all = np.empty((ncomps, 2))
         r2_all[:] = np.nan
 
-        rel_temp = img.Mesoscope & key
         time_bin_vector = [0]
 
-        flag_zscore = 1
         sigma = 1
 
         rel_FOVEpoch = img.FOVEpoch & key
         rel_FOV = img.FOV & key
         rel_data_area = (img.ROIdeltaF*img.ROIBrainArea) - img.ROIBad
         rel_data_tot = (img.ROIdeltaF & key) - img.ROIBad
-        rel_SVD = meso.SVDAreaTemporalComponents & 'time_bin = 0' & 'component_id < 20' & 'threshold_for_event = 0'
+        rel_SVD = meso.SVDAreaTemporalComponents & 'time_bin = 0' & 'component_id < %d'% max_comp & 'threshold_for_event = 0'
 
         if 'imaging_frame_rate' in rel_FOVEpoch.heading.secondary_attributes:
             imaging_frame_rate = rel_FOVEpoch.fetch1('imaging_frame_rate')
@@ -152,36 +151,40 @@ class CommSubspaceSVD(dj.Computed):
             insert_key['target_brain_area'] = target_brain_area
             
             F_target_binned = np.array([MakeBins(Fi.flatten(), time_bin * imaging_frame_rate) for Fi in F_target])
-            nneurons = 500
-            nneurons2 = F_target_binned.shape[0]
-            nneurons = min(nneurons,nneurons2)
+            # nneurons = 500
+            # nneurons2 = F_target_binned.shape[0]
+            # nneurons = min(nneurons,nneurons2)
             
-            if nneurons < 500:
-                flag = 1
-            else: 
-                ntimepoints = temporal_components.shape[1]
-                if ntimepoints < 1500:
-                    flag = 1
-            
-            if flag:
-                insert_key2 = {**insert_key, 'time_bin': time_bin, 'threshold_for_event': threshold_for_event}
-                self.insert1({**insert_key2, 'r2': r2_all}, allow_direct_insert=True)
-                return
-        
-            
-            nneurons = 500
-            ntimepoints = 1500
-            F_target_binned = F_target_binned[:nneurons,:ntimepoints]
-            temporal_components = temporal_components[:,:ntimepoints]
+            # if nneurons < 500:
+            #     flag = 1
+            # else: 
+            #     ntimepoints = temporal_components.shape[1]
+            #     if ntimepoints < 1500:
+            #         flag = 1
+     
+            # nneurons = 500
+            # ntimepoints = 1500
+            # F_target_binned = F_target_binned[:nneurons,:ntimepoints]
+            # temporal_components = temporal_components[:,:ntimepoints]
 
-            rank_vals = (np.floor(np.linspace(0, nneurons, nranks, endpoint=True))).astype(int)
+            # if flag:
+            #     insert_key2 = {**insert_key, 'time_bin': time_bin, 'threshold_for_event': threshold_for_event}
+            #     self.insert1({**insert_key2, 'r2': r2_all}, allow_direct_insert=True)
+            #     return
 
-            for i in range(nranks):
-                rank = rank_vals[i]
-                mse, ss, B, V = reduced_reg(temporal_components.T,F_target_binned.T,rank,sigma)
+            # if len(temporal_components) == 0:
+            #     flag = 1
+
+            comp_vals = (np.floor(np.linspace(0, max_comp, ncomps, endpoint=True))).astype(int)
+
+            for i in range(ncomps):
+                comps = comp_vals[i]
+                reduced_tc = temporal_components[:comps,:]
+                mse, ss, B, V = reduced_reg(reduced_tc.T,F_target_binned.T,0,sigma)
                 r2_all[i,0] = 1 - mse / ss
 
-            r2_all[:,1] = rank_vals.T
+            r2_all[:,1] = comp_vals.T
 
             insert_key2 = {**insert_key, 'time_bin': time_bin, 'threshold_for_event': threshold_for_event}
             self.insert1({**insert_key2, 'r2': r2_all}, allow_direct_insert=True)
+

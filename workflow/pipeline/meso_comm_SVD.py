@@ -105,7 +105,7 @@ class CommSubspaceSVD(dj.Computed):
         threshold_for_event = 0 # [0, 1, 2]
 
         ncomps = 40
-        max_comp = 200
+        max_comp = 500
         r2_all = np.empty((ncomps, 2))
         r2_all[:] = np.nan
 
@@ -151,7 +151,7 @@ class CommSubspaceSVD(dj.Computed):
             insert_key['target_brain_area'] = target_brain_area
             
             F_target_binned = np.array([MakeBins(Fi.flatten(), time_bin * imaging_frame_rate) for Fi in F_target])
-            nneurons = 500
+            nneurons = max_comp
             nneurons2 = F_target_binned.shape[0]
             nneurons = min(nneurons,nneurons2)
             
@@ -174,9 +174,9 @@ class CommSubspaceSVD(dj.Computed):
             # if len(temporal_components) == 0:
             #     flag = 1
 
-            comp_vals = (np.floor(np.linspace(1, max_comp, ncomps, endpoint=True))).astype(int)
+            comp_vals = (np.floor(np.linspace(0, max_comp, ncomps, endpoint=True))).astype(int)
 
-            for i in range(ncomps):
+            for i in range(1,ncomps):
                 comps = comp_vals[i]
                 reduced_tc = temporal_components[:comps,:]
                 mse, ss, B, V = reduced_reg(reduced_tc.T,F_target_binned.T,0,sigma)

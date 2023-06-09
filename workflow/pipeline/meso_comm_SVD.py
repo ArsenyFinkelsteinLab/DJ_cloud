@@ -175,7 +175,7 @@ class CommSubspaceSVD(dj.Computed):
             # if len(temporal_components) == 0:
             #     flag = 1
 
-            comp_vals = (np.floor(np.linspace(0, max_comp, ncomps, endpoint=True))).astype(int)
+            comp_vals = (np.floor(np.linspace(1, max_comp, ncomps, endpoint=True))).astype(int)
 
             for i in range(ncomps):
                 comps = comp_vals[i]

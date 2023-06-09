@@ -151,9 +151,9 @@ class CommSubspaceSVD(dj.Computed):
             insert_key['target_brain_area'] = target_brain_area
             
             F_target_binned = np.array([MakeBins(Fi.flatten(), time_bin * imaging_frame_rate) for Fi in F_target])
-            # nneurons = 500
-            # nneurons2 = F_target_binned.shape[0]
-            # nneurons = min(nneurons,nneurons2)
+            nneurons = 500
+            nneurons2 = F_target_binned.shape[0]
+            nneurons = min(nneurons,nneurons2)
             
             if nneurons < 500:
                 flag = 1
@@ -162,7 +162,6 @@ class CommSubspaceSVD(dj.Computed):
                 if ntimepoints < 1500:
                     flag = 1
      
-            # nneurons = 500
             ntimepoints = 1500
             F_target_binned = F_target_binned[:nneurons,:ntimepoints]
             temporal_components = temporal_components[:,:ntimepoints]

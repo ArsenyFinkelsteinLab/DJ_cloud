@@ -155,22 +155,22 @@ class CommSubspaceSVD(dj.Computed):
             # nneurons2 = F_target_binned.shape[0]
             # nneurons = min(nneurons,nneurons2)
             
-            # if nneurons < 500:
-            #     flag = 1
-            # else: 
-            #     ntimepoints = temporal_components.shape[1]
-            #     if ntimepoints < 1500:
-            #         flag = 1
+            if nneurons < 500:
+                flag = 1
+            else: 
+                ntimepoints = temporal_components.shape[1]
+                if ntimepoints < 1500:
+                    flag = 1
      
             # nneurons = 500
-            # ntimepoints = 1500
-            # F_target_binned = F_target_binned[:nneurons,:ntimepoints]
-            # temporal_components = temporal_components[:,:ntimepoints]
+            ntimepoints = 1500
+            F_target_binned = F_target_binned[:nneurons,:ntimepoints]
+            temporal_components = temporal_components[:,:ntimepoints]
 
-            # if flag:
-            #     insert_key2 = {**insert_key, 'time_bin': time_bin, 'threshold_for_event': threshold_for_event}
-            #     self.insert1({**insert_key2, 'r2': r2_all}, allow_direct_insert=True)
-            #     return
+            if flag:
+                insert_key2 = {**insert_key, 'time_bin': time_bin, 'threshold_for_event': threshold_for_event}
+                self.insert1({**insert_key2, 'r2': r2_all}, allow_direct_insert=True)
+                return
 
             # if len(temporal_components) == 0:
             #     flag = 1

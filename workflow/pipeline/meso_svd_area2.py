@@ -142,13 +142,13 @@ class ROISVDArea2(dj.Computed):
             u_limited = [ui[:num_comp] for ui in u]
             vt = vh[:num_components_save]
 
-            key_ROIs = (rel_data_area & key).fetch('KEY', order_by='roi_number')
-            for i in range(500):
-                key_ROIs[i]['roi_components'] = u_limited[i]
-                key_ROIs[i]['time_bin'] = time_bin
-                key_ROIs[i]['threshold_for_event'] = threshold
+#             key_ROIs = (rel_data_area & key).fetch('KEY', order_by='roi_number')
+#             for i in range(500):
+#                 key_ROIs[i]['roi_components'] = u_limited[i]
+#                 key_ROIs[i]['time_bin'] = time_bin
+#                 key_ROIs[i]['threshold_for_event'] = threshold
 
-            InsertChunked(self, key_ROIs, 1000)
+#             InsertChunked(self, key_ROIs, 1000)
 
             svd_key = {**key, 'time_bin': time_bin, 'threshold_for_event': threshold}
             self2.insert1({**svd_key, 'singular_values': s}, allow_direct_insert=True)

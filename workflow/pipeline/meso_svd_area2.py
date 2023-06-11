@@ -76,7 +76,7 @@ class ROISVDArea2(dj.Computed):
 
     @property
     def key_source(self):
-        return (exp2.SessionEpoch*lab.BrainArea & img.ROIdeltaF & img.ROIBrainArea & stimanal.MiceIncluded) - exp2.SessionEpochSomatotopy
+        return (exp2.SessionEpoch*lab.BrainArea & img.ROIdeltaF & img.ROIBrainArea & stimanal.MiceIncluded & 'session_epoch_type = "spont_only"') - exp2.SessionEpochSomatotopy
 
     def make(self, key):
     	# So far the code is only correct for threshold == 0

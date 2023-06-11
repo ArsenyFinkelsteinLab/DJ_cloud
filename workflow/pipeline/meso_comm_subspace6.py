@@ -105,7 +105,7 @@ class CommSubspace6(dj.Computed):
     	# So far the code is only correct for threshold == 0
         threshold_for_event = 0 # [0, 1, 2]
 
-        nranks = 500
+        nranks = 200
         r2_all = np.empty((nranks, 2))
         r2_all[:] = np.nan
 

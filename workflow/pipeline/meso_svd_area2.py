@@ -120,13 +120,13 @@ class ROISVDArea2(dj.Computed):
         
         if nneurons < 500:
           return
-        if ntimepoints < 2500:
+        if ntimepoints < 1500:
           return
         
         nneurons = 500
-        ntimepoints = 2500
+        ntimepoints = 1500
         
-        F_binned = F_binned[:500-1, :2500-1]
+        F_binned = F_binned[:500-1, :1500-1]
         
         for threshold in thresholds_for_event:
             F_normalized = NormalizeF(F_binned, threshold, flag_zscore)

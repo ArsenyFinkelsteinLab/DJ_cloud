@@ -98,7 +98,7 @@ class CommSubspaceSVD(dj.Computed):
 
     @property
     def key_source(self):
-        return (exp2.SessionEpoch*meso.SourceBrainArea*meso.TargetBrainArea & img.ROIdeltaF & img.ROIBrainArea & stimanal.MiceIncluded & meso.SVDAreaTemporalComponents) - exp2.SessionEpochSomatotopy
+        return (exp2.SessionEpoch*meso.SourceBrainArea*meso.TargetBrainArea & img.ROIdeltaF & img.ROIBrainArea & stimanal.MiceIncluded & meso.SVDAreaTemporalComponents2) - exp2.SessionEpochSomatotopy
     
     def make(self, key):
     	# So far the code is only correct for threshold == 0
@@ -117,7 +117,7 @@ class CommSubspaceSVD(dj.Computed):
         rel_FOV = img.FOV & key
         rel_data_area = (img.ROIdeltaF*img.ROIBrainArea) - img.ROIBad
         rel_data_tot = (img.ROIdeltaF & key) - img.ROIBad
-        rel_SVD = meso.SVDAreaTemporalComponents & 'time_bin = 0' & 'component_id < %d'% max_comp & 'threshold_for_event = 0'
+        rel_SVD = meso.SVDAreaTemporalComponents2 & 'time_bin = 0' & 'component_id < %d'% max_comp & 'threshold_for_event = 0'
 
         if 'imaging_frame_rate' in rel_FOVEpoch.heading.secondary_attributes:
             imaging_frame_rate = rel_FOVEpoch.fetch1('imaging_frame_rate')
@@ -159,10 +159,10 @@ class CommSubspaceSVD(dj.Computed):
                 flag = 1
             else: 
                 ntimepoints = temporal_components.shape[1]
-                if ntimepoints < 1500:
+                if ntimepoints < 2500:
                     flag = 1
      
-            ntimepoints = 1500
+            ntimepoints = 2500
             F_target_binned = F_target_binned[:nneurons,:ntimepoints]
             temporal_components = temporal_components[:,:ntimepoints]
 

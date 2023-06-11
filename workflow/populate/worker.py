@@ -15,6 +15,7 @@ from workflow.pipeline import meso_area_shuffle
 from workflow.pipeline import area_svd_LDS
 from workflow.pipeline import meso_comm_subspace
 from workflow.pipeline import meso_comm_subspace4
+from workflow.pipeline import meso_comm_subspace6
 
 # from workflow.pipeline import analysis_new   # import another schema in the future
 
@@ -43,7 +44,7 @@ standard_worker = DataJointWorker('standard_worker',
 
 
 ###### Communication Subspace
-standard_worker(meso_comm_subspace4.CommSubspace4)
+standard_worker(meso_comm_subspace6.CommSubspace6)
 
 #analysis_pop.ROISVDPython.key_source &= {'subject_id': '464724', 'session': 7}
 #standard_worker(analysis_pop.ROISVDPython)

@@ -85,7 +85,7 @@ def reduced_reg(X,Y,rank,sigma):
 
 
 @schema
-class CommSubspaceSVD(dj.Computed):
+class CommSubspaceSVD2(dj.Computed):
     definition = """
     -> exp2.SessionEpoch
     -> meso.SourceBrainArea

@@ -104,7 +104,7 @@ class CommSubspaceSVD2(dj.Computed):
     	# So far the code is only correct for threshold == 0
         threshold_for_event = 0 # [0, 1, 2]
 
-        ncomps = 200
+        ncomps = 40
         max_comp = 500
         r2_all = np.empty((ncomps, 2))
         r2_all[:] = np.nan
@@ -178,7 +178,7 @@ class CommSubspaceSVD2(dj.Computed):
 
             for i in range(1,ncomps):
                 comps = comp_vals[i]
-                reduced_tc = temporal_components[:comps,:]
+                reduced_tc = temporal_components[comps:,:]
                 mse, ss, B, V = reduced_reg(reduced_tc.T,F_target_binned.T,0,sigma)
                 r2_all[i,0] = 1 - mse / ss
 

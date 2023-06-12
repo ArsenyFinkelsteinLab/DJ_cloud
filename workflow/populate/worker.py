@@ -48,8 +48,8 @@ standard_worker = DataJointWorker('standard_worker',
 
 
 ##### Communication Subspace
-# standard_worker(meso_comm_SVD.CommSubspaceSVD)
-standard_worker(meso_comm_subspace6.CommSubspace6)
+standard_worker(meso_comm_SVD.CommSubspaceSVD)
+#standard_worker(meso_comm_subspace6.CommSubspace6)
 
 
 #analysis_pop.ROISVDPython.key_source &= {'subject_id': '464724', 'session': 7}

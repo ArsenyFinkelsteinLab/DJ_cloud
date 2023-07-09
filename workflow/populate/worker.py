@@ -45,7 +45,7 @@ standard_worker = DataJointWorker('standard_worker',
 
 
 ###### Communication Subspace
-standard_worker(meso_comm_SVD2.CommSubspaceSVD2)
+# standard_worker(meso_comm_SVD2.CommSubspaceSVD2)
 
 #analysis_pop.ROISVDPython.key_source &= {'subject_id': '464724', 'session': 7}
 #standard_worker(analysis_pop.ROISVDPython)
@@ -79,7 +79,7 @@ standard_worker(meso_comm_SVD2.CommSubspaceSVD2)
 #analysis_pop_area.ROISVDArea.key_source &= {'subject_id': '464725'}
 #standard_worker(analysis_pop_area.ROISVDArea)
 
-#standard_worker(meso_svd_area2.ROISVDArea2)
+standard_worker(meso_svd_area2.ROISVDArea2)
 
 ###### Area SVD shuffled
 #meso_area_shuffle.SVDAreaShuffle.key_source &= {'subject_id': '464724', 'session': '1'}

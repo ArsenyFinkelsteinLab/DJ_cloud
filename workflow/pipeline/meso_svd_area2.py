@@ -143,6 +143,7 @@ class ROISVDArea2(dj.Computed):
             vt = vh[:num_components_save]
 
             key_ROIs = (rel_data_area & key).fetch('KEY', order_by='roi_number')
+            key_ROIs = key_ROIs[:500]
             for i in range(500):
                 key_ROIs[i]['roi_components'] = u_limited[i]
                 key_ROIs[i]['time_bin'] = time_bin

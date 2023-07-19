@@ -21,6 +21,7 @@ from workflow.pipeline import meso_comm_subspace_basis
 from workflow.pipeline import meso_comm_SVD
 from workflow.pipeline import meso_comm_SVD2
 from workflow.pipeline import meso_comm_subspace6
+from workflow.pipeline import meso_cs_autocorr
 
 # from workflow.pipeline import analysis_new   # import another schema in the future
 
@@ -49,6 +50,9 @@ standard_worker = DataJointWorker('standard_worker',
 
 
 ##### Communication Subspace
+
+standard_worker(meso_cs_autocorr.CSTemporalComponentsAutocorr)
+
 #standard_worker(meso_comm_SVD2.CommSubspaceSVD2)
 #standard_worker(meso_comm_subspace6.CommSubspace6)
 
@@ -87,7 +91,7 @@ standard_worker = DataJointWorker('standard_worker',
 #analysis_pop_area.ROISVDArea.key_source &= {'subject_id': '464725'}
 #standard_worker(analysis_pop_area.ROISVDArea)
 
-standard_worker(meso_svd_area2.ROISVDArea2)
+# standard_worker(meso_svd_area2.ROISVDArea2)
 
 ###### Area SVD shuffled
 #meso_area_shuffle.SVDAreaShuffle.key_source &= {'subject_id': '464724', 'session': '1'}

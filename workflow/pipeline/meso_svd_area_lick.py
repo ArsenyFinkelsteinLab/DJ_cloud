@@ -170,13 +170,13 @@ class ROISVDAreaLick(dj.Computed):
         F_binned = np.array([MakeBins(Fi.flatten(), time_bin * imaging_frame_rate) for Fi in F])
 
         nneurons = F_binned.shape[0]        
-        if nneurons < 500:
-          return
+        # if nneurons < 500:
+          # return
         
-        nneurons = 500
+        # nneurons = 500
         
-        F_binned = F_binned[:nneurons, :]
-        num_pieces = 12
+        # F_binned = F_binned[:nneurons, :]
+        num_pieces = 14
         F_partitioned = get_partition_by_lick(F_binned,imaging_frame_rate,key,num_pieces)
   
         for j in range(num_pieces):
@@ -190,7 +190,7 @@ class ROISVDAreaLick(dj.Computed):
 
                 # in numpy, s is already just a vector; no need to take diag
                 squared_s = s ** 2
-                num_components_save = min(num_components_save, nneurons)
+                # num_components_save = min(num_components_save, nneurons)
                 variance_explained = squared_s / sum(squared_s) # a feature of SVD. proportion of variance explained by each component
                 cumulative_variance_explained = np.cumsum(variance_explained)
                 num_comp = bisect(cumulative_variance_explained, threshold_variance_explained)

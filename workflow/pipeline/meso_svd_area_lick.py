@@ -63,9 +63,9 @@ def FloatRange(start, stop, step):
     num_steps = int((stop - start) / step) + 1
     return [start + i * step for i in range(num_steps)]
 
-def get_partition_by_lick(F,imaging_frame_rate,key):
+def get_partition_by_lick(F,imaging_frame_rate,key,num_pieces):
 
-    T = 4   # number of frames to include before and after the lick
+    # T = 6   # number of frames to include before and after the lick
 
     rel_start_frame = img.FrameStartTrial & key & meso.Predictors
     TrialsStartFrame = rel_start_frame.fetch('session_epoch_trial_start_frame', order_by='trial')
@@ -81,32 +81,37 @@ def get_partition_by_lick(F,imaging_frame_rate,key):
     go_times = rel_go.fetch('trial_event_time')
 
     bins_vector = list(range(1, int(sesson_epoch_duration_frame) + 1))
+    num_trials = len(trial_num)
+    num_neurons = F.shape[0]
 
-    F_before_lick = []
-    F_after_lick = []
+    F_all = []
 
-    for i_tr in range(len(trial_num)):
-        trial_lick_times = lick_times[i_tr]
-        if not trial_lick_times.size:
-            continue
-        first_lick_time = trial_lick_times[0,0]
-        first_lick_time = first_lick_time + float(go_times[i_tr])
-        relative_first_lick_frame = -(-first_lick_time // imaging_frame_rate)  # Equivalent to ceil() in MATLAB
+    for p in range(num_pieces):
+        F_piece = np.empty((num_neurons, num_trials))
 
-        idx_binned_frame_start = next((i for i, val in enumerate(bins_vector - TrialsStartFrame[i_tr]) if val > 0), None)
-        idx_binned_frame_end = next((i for i, val in enumerate(bins_vector - TrialsEndFrame[i_tr]) if val > 0), None)
-        if idx_binned_frame_start is None or idx_binned_frame_end is None:
-            continue
+        for i_tr in range(num_trials):
+            trial_lick_times = lick_times[i_tr]
+            if not trial_lick_times.size:
+                continue
+            first_lick_time = trial_lick_times[0,0]
+            first_lick_time = first_lick_time + float(go_times[i_tr])
+            relative_first_lick_frame = -(-first_lick_time // imaging_frame_rate)  # Equivalent to ceil() in MATLAB
 
-        abs_lick_frame = int(idx_binned_frame_start + relative_first_lick_frame)
+            idx_binned_frame_start = next((i for i, val in enumerate(bins_vector - TrialsStartFrame[i_tr]) if val > 0), None)
+            idx_binned_frame_end = next((i for i, val in enumerate(bins_vector - TrialsEndFrame[i_tr]) if val > 0), None)
+            if idx_binned_frame_start is None or idx_binned_frame_end is None:
+                continue
 
-        tmp_before = F[:, abs_lick_frame-T : abs_lick_frame]
-        tmp_after = F[:, abs_lick_frame : abs_lick_frame+T]
+            abs_lick_frame = int(idx_binned_frame_start + relative_first_lick_frame)
 
-        F_before_lick.append(tmp_before)
-        F_after_lick.append(tmp_after)
+            tmp= F[:, abs_lick_frame + (p-round(num_pieces/2))]
 
-    return np.concatenate(F_before_lick,axis=1), np.concatenate(F_after_lick,axis=1)
+            F_piece[:,i_tr] = tmp
+
+        # np.concatenate(F_piece,axis=0)
+        F_all.append(F_piece)
+
+    return F_all
 
 
 
@@ -124,7 +129,7 @@ class ROISVDAreaLick(dj.Computed):
     """
 
     @property
-    def key_source(self):
+    def key_source(self): 
         return (exp2.SessionEpoch*lab.BrainArea & img.ROIdeltaF & img.ROIBrainArea & stimanal.MiceIncluded & 'session_epoch_type = "behav_only"') - exp2.SessionEpochSomatotopy
 
     def make(self, key):
@@ -171,10 +176,10 @@ class ROISVDAreaLick(dj.Computed):
         nneurons = 500
         
         F_binned = F_binned[:nneurons, :]
-
-        F_partitioned = get_partition_by_lick(F_binned,imaging_frame_rate,key)
+        num_pieces = 12
+        F_partitioned = get_partition_by_lick(F_binned,imaging_frame_rate,key,num_pieces)
   
-        for j in range(2):
+        for j in range(num_pieces):
 
             F_part = F_partitioned[j]
 

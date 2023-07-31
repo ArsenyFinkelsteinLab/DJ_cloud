@@ -65,7 +65,7 @@ def FloatRange(start, stop, step):
 
 def get_partition_by_lick(F,imaging_frame_rate,key):
 
-    T = 6   # number of frames to include before and after the lick
+    T = 10   # number of frames to include before and after the lick
 
     rel_start_frame = img.FrameStartTrial & key & meso.Predictors
     TrialsStartFrame = rel_start_frame.fetch('session_epoch_trial_start_frame', order_by='trial')

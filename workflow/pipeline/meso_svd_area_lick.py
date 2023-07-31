@@ -21,7 +21,7 @@ def FetchChunked(relation_area, relation_tot, idx_name, val_name, chunk_size):
     idx = relation_tot.fetch(idx_name, order_by=idx_name)
     num_elements = len(idx)
     num_chunks = (num_elements + (chunk_size - 1)) // chunk_size
-    num_chunks = min(num_chunks,2)
+    # num_chunks = min(num_chunks,2)
     parts = []
     for i_chunk in range(num_chunks):
         i = i_chunk * chunk_size + 1

@@ -170,10 +170,10 @@ class ROISVDAreaLick(dj.Computed):
         F_binned = np.array([MakeBins(Fi.flatten(), time_bin * imaging_frame_rate) for Fi in F])
 
         nneurons = F_binned.shape[0]        
-        # if nneurons < 500:
-          # return
+        if nneurons < 200:
+          return
         
-        # nneurons = 500
+        nneurons = 200
         
         # F_binned = F_binned[:nneurons, :]
         num_pieces = 14

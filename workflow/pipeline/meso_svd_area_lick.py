@@ -170,12 +170,12 @@ class ROISVDAreaLick(dj.Computed):
         F_binned = np.array([MakeBins(Fi.flatten(), time_bin * imaging_frame_rate) for Fi in F])
 
         nneurons = F_binned.shape[0]        
-        if nneurons < 200:
-          return
+        # if nneurons < 200:
+          # return
         
-        nneurons = 200
+        # nneurons = 200
         
-        F_binned = F_binned[:nneurons, :]
+        # F_binned = F_binned[:nneurons, :]
         num_pieces = 14
         F_partitioned = get_partition_by_lick(F_binned,imaging_frame_rate,key,num_pieces)
   
@@ -199,7 +199,7 @@ class ROISVDAreaLick(dj.Computed):
 
                 key_ROIs = (rel_data_area & key).fetch('KEY', order_by='roi_number')
                 key_ROIs = key_ROIs[:nneurons]
-                for i in range(nneurons):
+                for i in range(1):
                     key_ROIs[i]['roi_components'] = u[i,:]
                     key_ROIs[i]['time_bin'] = time_bin
                     key_ROIs[i]['threshold_for_event'] = threshold
@@ -211,7 +211,7 @@ class ROISVDAreaLick(dj.Computed):
                 self2.insert1({**svd_key, 'singular_values': s}, allow_direct_insert=True)
                 key_temporal = [{**svd_key, 'component_id': ic, 'temporal_component': vt[ic]}
                                 for ic in range(num_components_save)]
-                self3.insert(key_temporal, allow_direct_insert=True)
+                # self3.insert(key_temporal, allow_direct_insert=True)
 
 
 @schema

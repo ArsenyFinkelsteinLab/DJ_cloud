@@ -175,7 +175,7 @@ class ROISVDAreaLick(dj.Computed):
         
         nneurons = 200
         
-        # F_binned = F_binned[:nneurons, :]
+        F_binned = F_binned[:nneurons, :]
         num_pieces = 14
         F_partitioned = get_partition_by_lick(F_binned,imaging_frame_rate,key,num_pieces)
   

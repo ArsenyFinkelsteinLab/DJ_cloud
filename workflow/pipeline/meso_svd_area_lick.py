@@ -63,25 +63,62 @@ def FloatRange(start, stop, step):
     num_steps = int((stop - start) / step) + 1
     return [start + i * step for i in range(num_steps)]
 
+
+
+def get_trial_times_relative_to_lick(key, frame_rate, time_bin, flag_electric_video):
+
+    TrialsStartFrame = ((img.FrameStartTrial & key) - tracking.VideoGroomingTrial).fetch('session_epoch_trial_start_frame', order_by='trial')
+    trial_num = ((img.FrameStartTrial & key) - tracking.VideoGroomingTrial).fetch('trial', order_by='trial')
+
+    if len(TrialsStartFrame) == 0:
+        TrialsStartFrame = (img.FrameStartFile & key).fetch('session_epoch_file_start_frame', order_by='session_epoch_file_num')
+        trial_num = ((exp2.BehaviorTrial & key) - tracking.VideoGroomingTrial).fetch('trial', order_by='trial')
+        TrialsStartFrame = TrialsStartFrame[trial_num]
+
+    if flag_electric_video == 1:
+        LICK_VIDEO = []  # We align based on electric lickport, even if video does not exist
+    elif flag_electric_video == 2:
+        # We align based on video if it exists
+        # We align to the first video-detected lick after lickport movement
+        LICK_VIDEO = ((tracking.VideoNthLickTrial & key) - tracking.VideoGroomingTrial).fetch('lick_time_onset_relative_to_trial_start')
+
+    go_time = (((exp2.BehaviorTrial.Event & key) - tracking.VideoGroomingTrial) & 'trial_event_type="go"').fetch('trial_event_time')
+    LICK_ELECTRIC = ((exp2.ActionEvent & key) - tracking.VideoGroomingTrial).fetch()
+
+    start_file = np.zeros(len(trial_num))
+    end_file = np.zeros(len(trial_num))
+    lick_file = np.zeros(len(trial_num))
+   
+    for i_tr in range(len(trial_num)):
+        if len(LICK_VIDEO) > 0:
+            all_licks = LICK_VIDEO[LICK_VIDEO['trial'] == trial_num[i_tr]]['lick_time_onset_relative_to_trial_start']
+            licks_after_go = all_licks[all_licks > go_time[i_tr]]
+        else:
+            all_licks = LICK_ELECTRIC[LICK_ELECTRIC['trial'] == trial_num[i_tr]]['action_event_time']
+            licks_after_go = all_licks[all_licks > go_time[i_tr]]
+        
+        if len(licks_after_go) > 0:
+            start_file[i_tr] = TrialsStartFrame[i_tr] + int(float(licks_after_go[0]) * frame_rate) + int(time_bin[0] * frame_rate)
+            end_file[i_tr] = start_file[i_tr] + int(float(time_bin[1] - time_bin[0]) * frame_rate) - 1
+                        
+            if start_file[i_tr] <= 0:
+                start_file[i_tr] = float('nan')
+                end_file[i_tr] = float('nan')
+
+        else:
+            start_file[i_tr] = float('nan')
+            end_file[i_tr] = float('nan')
+
+    return start_file, end_file
+
+
 def get_partition_by_lick(F,imaging_frame_rate,key,num_pieces):
 
-    # T = 6   # number of frames to include before and after the lick
+    start_bin = int(num_pieces/2) - num_pieces
+    end_bin = -start_bin
+    start_file, end_file = get_trial_times_relative_to_lick(key, imaging_frame_rate, [start_bin, end_bin], 1)
 
-    rel_start_frame = img.FrameStartTrial & key & meso.Predictors
-    TrialsStartFrame = rel_start_frame.fetch('session_epoch_trial_start_frame', order_by='trial')
-    TrialsEndFrame = rel_start_frame.fetch('session_epoch_trial_end_frame', order_by='trial')
-    trial_num = rel_start_frame.fetch('trial', order_by='trial')
-    rel_session_duration = img.SessionEpochFrame & key
-    sesson_epoch_duration_frame = rel_session_duration.fetch('session_epoch_end_frame') - rel_session_duration.fetch('session_epoch_start_frame') +1
-
-    rel_lick_time = tracking.VideoTongueTrial & key & meso.Predictors
-    lick_times = rel_lick_time.fetch('licks_time_electric')
-
-    rel_go = exp2.BehaviorTrial.Event() & key & meso.Predictors & 'trial_event_type = "go"'
-    go_times = rel_go.fetch('trial_event_time')
-
-    bins_vector = list(range(1, int(sesson_epoch_duration_frame) + 1))
-    num_trials = len(trial_num)
+    num_trials = len(start_file)
     num_neurons = F.shape[0]
 
     F_all = []
@@ -90,21 +127,14 @@ def get_partition_by_lick(F,imaging_frame_rate,key,num_pieces):
         F_piece = np.empty((num_neurons, num_trials))
 
         for i_tr in range(num_trials):
-            trial_lick_times = lick_times[i_tr]
-            if not trial_lick_times.size:
-                continue
-            first_lick_time = trial_lick_times[0,0]
-            first_lick_time = first_lick_time + float(go_times[i_tr])
-            relative_first_lick_frame = -(-first_lick_time // imaging_frame_rate)  # Equivalent to ceil() in MATLAB
 
-            idx_binned_frame_start = next((i for i, val in enumerate(bins_vector - TrialsStartFrame[i_tr]) if val > 0), None)
-            idx_binned_frame_end = next((i for i, val in enumerate(bins_vector - TrialsEndFrame[i_tr]) if val > 0), None)
-            if idx_binned_frame_start is None or idx_binned_frame_end is None:
+            start_frame = start_file[i_tr]
+            if isnan(start_frame):
                 continue
 
-            abs_lick_frame = int(idx_binned_frame_start + relative_first_lick_frame)
+            start_frame = int(start_frame)
 
-            tmp= F[:, abs_lick_frame + (p-round(num_pieces/2))]
+            tmp= F[:, start_bin + p]
 
             F_piece[:,i_tr] = tmp
 

@@ -124,7 +124,7 @@ def get_partition_by_lick(F,imaging_frame_rate,key,num_pieces):
     F_all = []
 
     for p in range(num_pieces):
-        F_piece = np.empty((num_neurons, num_trials))
+        F_piece = [] #np.empty((num_neurons, num_trials))
 
         for i_tr in range(num_trials):
 
@@ -135,10 +135,9 @@ def get_partition_by_lick(F,imaging_frame_rate,key,num_pieces):
             start_frame = int(start_frame)
 
             tmp= F[:, start_bin + p]
+            F_piece.append(tmp)
 
-            F_piece[:,i_tr] = tmp
-
-        # np.concatenate(F_piece,axis=0)
+        F_piece = np.asarray(F_piece)
         F_all.append(F_piece)
 
     return F_all

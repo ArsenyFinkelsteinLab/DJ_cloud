@@ -171,7 +171,7 @@ class ROISVDAreaLickHalves(dj.Computed):
         threshold_variance_explained = 0.9
         num_components_save = 500
 
-        self2 = SVDAreaSingularValuesLick
+        self2 = SVDAreaSingularValuesLickHalves
         for i, time_bin in enumerate(time_bin_vector):
             self.compute_SVD(self2, key, flag_zscore, time_bin, thresholds_for_event, threshold_variance_explained, num_components_save)
 
@@ -204,7 +204,7 @@ class ROISVDAreaLickHalves(dj.Computed):
         
         # F_binned = F_binned[:nneurons, :]
         num_pieces = 2
-        F_partitioned = get_partition_by_lick(F_binned,imaging_frame_rate,key,num_pieces)
+        F_partitioned = get_partition_by_lick(F_binned,imaging_frame_rate,key)
   
         for j in range(num_pieces):
 

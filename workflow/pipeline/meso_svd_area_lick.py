@@ -169,11 +169,11 @@ class ROISVDAreaLick(dj.Computed):
 
         F_binned = np.array([MakeBins(Fi.flatten(), time_bin * imaging_frame_rate) for Fi in F])
 
-        nneurons = F_binned.shape[0]        
+        # nneurons = F_binned.shape[0]        
         # if nneurons < 200:
           # return
         
-        # nneurons = 200
+        nneurons = 1
         
         # F_binned = F_binned[:nneurons, :]
         num_pieces = 14
@@ -199,7 +199,7 @@ class ROISVDAreaLick(dj.Computed):
 
                 key_ROIs = (rel_data_area & key).fetch('KEY', order_by='roi_number')
                 key_ROIs = key_ROIs[:nneurons]
-                for i in range(1):
+                for i in range(nneurons):
                     key_ROIs[i]['roi_components'] = u[i,:]
                     key_ROIs[i]['time_bin'] = time_bin
                     key_ROIs[i]['threshold_for_event'] = threshold

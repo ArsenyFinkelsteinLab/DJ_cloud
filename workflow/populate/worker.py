@@ -53,11 +53,11 @@ standard_worker = DataJointWorker('standard_worker',
 
 
 #### Lick-partitioned SVD
-standard_worker(meso_svd_area_lick_halves.ROISVDAreaLickHalves)
+# standard_worker(meso_svd_area_lick_halves.ROISVDAreaLickHalves)
 
 
 ##### Communication Subspace
-# standard_worker(meso_comm_subspace_lick.CommSubspaceLick)
+standard_worker(meso_comm_subspace_lick.CommSubspaceLick)
 
 # standard_worker(meso_cs_autocorr.CSTemporalComponentsAutocorr)
 

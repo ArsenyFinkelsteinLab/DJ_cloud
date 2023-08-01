@@ -134,7 +134,7 @@ def get_partition_by_lick(F,imaging_frame_rate,key,num_pieces):
 
             start_frame = int(start_frame)
 
-            tmp= F[:, start_bin + p]
+            tmp= F[:, start_frame + p]
             F_piece.append(tmp)
 
         F_piece = np.asarray(F_piece)

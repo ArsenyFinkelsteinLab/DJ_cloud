@@ -23,6 +23,7 @@ from workflow.pipeline import meso_comm_SVD2
 from workflow.pipeline import meso_comm_subspace6
 from workflow.pipeline import meso_cs_autocorr
 from workflow.pipeline import meso_svd_area_lick
+from workflow.pipeline import meso_svd_area_lick_halves
 from workflow.pipeline import meso_comm_subspace_lick
 
 # from workflow.pipeline import analysis_new   # import another schema in the future
@@ -52,11 +53,11 @@ standard_worker = DataJointWorker('standard_worker',
 
 
 #### Lick-partitioned SVD
-# standard_worker(meso_svd_area_lick.ROISVDAreaLick)
+standard_worker(meso_svd_area_lick_halves.ROISVDAreaLickHalves)
 
 
 ##### Communication Subspace
-standard_worker(meso_comm_subspace_lick.CommSubspaceLick)
+# standard_worker(meso_comm_subspace_lick.CommSubspaceLick)
 
 # standard_worker(meso_cs_autocorr.CSTemporalComponentsAutocorr)
 

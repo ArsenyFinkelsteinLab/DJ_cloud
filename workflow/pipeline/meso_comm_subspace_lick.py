@@ -140,8 +140,8 @@ def get_trial_times_relative_to_lick(key, frame_rate, time_bin, flag_electric_vi
 
 def get_partition_by_lick(F,imaging_frame_rate,key):
 
-    start_bin = -6
-    end_bin = 8
+    start_bin = -4
+    end_bin = 6
     start_file, end_file = get_trial_times_relative_to_lick(key, imaging_frame_rate, [start_bin, end_bin], 1)
 
     num_trials = len(start_file)
